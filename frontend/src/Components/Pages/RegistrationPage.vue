@@ -1,6 +1,6 @@
 <script setup>
 import Layout from '../Layout.vue';
-import Registration from "@/components/forms/RegistrationForm.vue";
+import Registration from "@/Components/Forms/RegistrationForm.vue";
 </script>
 
 <template>

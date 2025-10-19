@@ -1,9 +1,9 @@
 import {createMemoryHistory, createRouter} from "vue-router";
-import Users from "@/components/views/UsersView.vue";
-import GameView from "@/components/views/GameView.vue";
-import RegistrationView from "@/components/views/RegistrationView.vue";
-import AuthorizationView from "@/components/views/AuthorizationView.vue";
-import StartScreen from "@/components/views/StartScreenView.vue"
+import Users from "@/Components/Pages/UsersPage.vue";
+import GameView from "@/Components/Pages/GamePage.vue";
+import RegistrationView from "@/Components/Pages/RegistrationPage.vue";
+import AuthorizationView from "@/Components/Pages/AuthorizationPage.vue";
+import StartScreen from "@/Components/Pages/StartScreenPage.vue"
 
 const routes = [
     // {path: '/', component: StartScreen},
