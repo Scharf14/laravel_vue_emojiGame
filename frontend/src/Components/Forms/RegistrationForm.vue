@@ -56,7 +56,7 @@ function register() {
           >
         </div>
 
-        <button @click="register" class="register-button">
+        <button @click="register" type="button" class="register-button">
           Зарегистрироваться
         </button>
       </form>

@@ -25,8 +25,16 @@ class AuthController extends Controller
     public function login(AuthUserRequest $request)
     {
         $credentials = $request->validated();
-        if (Auth::attempt($credentials)) {
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (Hash::check($credentials['password'], $user->password)) {
+            Auth::login($user);
             return response()->json($credentials);
         }
+
+        return response()->json([
+            'message' => 'The account information provided is incorrect.'
+        ], 401);
     }
 }

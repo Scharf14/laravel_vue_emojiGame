@@ -11,7 +11,7 @@ const authUser = reactive({
 const router = useRouter()
 
 function login() {
-  axios.post('http://localhost:8000/api/auth/login', authUser)
+  axios.get('http://localhost:8000/api/test', authUser)
       .then(() => router.push('/'))
       .catch(response => console.log(response))
 }
@@ -40,7 +40,7 @@ function login() {
         >
       </div>
 
-      <button @click="login" class="login-button">
+      <button @click="login" type="button" class="login-button">
         Войти
       </button>
     </div>

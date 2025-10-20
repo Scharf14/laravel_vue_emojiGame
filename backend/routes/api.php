@@ -8,6 +8,8 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::prefix('/auth',)->controller(\App\Http\Controllers\AuthController::class)->group(function () {
-    Route::post('/login', 'login');
+    Route::post('/login', 'login' )->name('login');
     Route::post('/register', 'register');
 });
+
+
