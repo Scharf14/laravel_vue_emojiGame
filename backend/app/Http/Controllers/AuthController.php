@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -17,9 +16,18 @@ class AuthController extends Controller
         $data['password'] = Hash::make($data['password']);
 
         $user = User::create($data);
-        Auth::login($user);
 
-        return response()->json($user);
+        $token = Str::random(10);
+
+        $user->token = $token;
+
+        $user->save();
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+            'message' => 'registration successful'
+        ], 201);
     }
 
     public function login(AuthUserRequest $request)
@@ -28,13 +36,33 @@ class AuthController extends Controller
 
         $user = User::where('email', $credentials['email'])->first();
 
-        if (Hash::check($credentials['password'], $user->password)) {
-            Auth::login($user);
-            return response()->json($credentials);
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            return response()->json([
+                'message' => 'the user does not exist'
+            ], 404);
         }
 
+        $token = Str::random(10);
+
+        $user->token = $token;
+
+        $user->save();
+
         return response()->json([
-            'message' => 'The account information provided is incorrect.'
-        ], 401);
+            'user' => $user,
+            'token' => $token,
+            'message' => 'You have logged in successfully.'
+        ]);
+    }
+
+    public function logout(AuthUserRequest $request)
+    {
+        $request->user()->update([
+            'token' => null,
+        ]);
+
+        return response()->json([
+            'message' => 'you logged out successfully'
+        ]);
     }
 }

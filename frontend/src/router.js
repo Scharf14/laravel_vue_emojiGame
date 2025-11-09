@@ -1,5 +1,4 @@
 import {createMemoryHistory, createRouter} from "vue-router";
-import Users from "@/Components/Pages/UsersPage.vue";
 import GameView from "@/Components/Pages/GamePage.vue";
 import RegistrationView from "@/Components/Pages/RegistrationPage.vue";
 import AuthorizationView from "@/Components/Pages/AuthorizationPage.vue";
@@ -11,7 +10,6 @@ const routes = [
     // {path: '/game', component: GameView},
     {path: '/registration', component: RegistrationView},
     {path: '/authorization', component: AuthorizationView},
-    {path: '/users', component: Users}
 ]
 
 const router = createRouter({

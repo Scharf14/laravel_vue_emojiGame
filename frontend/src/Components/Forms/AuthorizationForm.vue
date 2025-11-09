@@ -1,7 +1,7 @@
 <script setup>
 import {useRouter} from 'vue-router';
 import {reactive} from "vue";
-import axios from 'axios';
+import apiClient from "../../utils/api.js";
 
 const authUser = reactive({
   email: '',
@@ -11,11 +11,12 @@ const authUser = reactive({
 const router = useRouter()
 
 function login() {
-  axios.get('http://localhost:8000/api/test', authUser)
-      .then(() => router.push('/'))
+  apiClient.post('/auth/login', authUser)
+      .then(function(response){
+        localStorage.setItem('token', response.data.token)
+      })
       .catch(response => console.log(response))
 }
-
 
 </script>
 

@@ -2,18 +2,22 @@
 import {useRouter} from 'vue-router';
 import {reactive} from "vue";
 import axios from 'axios';
+import apiClient from "@/utils/api.js";
 
 const newUser = reactive({
   name: '',
   email: '',
-  password: ''
+  password: '',
 })
 
 const router = useRouter()
 
 function register() {
-  axios.post('http://localhost:8000/api/auth/register', newUser)
-      .then(() => router.push('/'))
+  apiClient.post('/auth/register', newUser)
+      .then(function (response) {
+        localStorage.setItem('token', response.data.token)
+        router.push('/')
+      })
       .catch(response => console.log(response))
 }
 </script>

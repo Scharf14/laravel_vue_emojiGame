@@ -1,8 +1,21 @@
 <script setup>
+import apiClient from "@/utils/api.js";
+import {useRouter} from 'vue-router';
+
 const props = defineProps({
   lvlUser: Number,
   exp: Number
 })
+
+const router = useRouter();
+function logout() {
+  apiClient.post('/auth/logout')
+      .then(function (response) {
+        localStorage.removeItem('token')
+        router.push('/')
+      })
+      .catch(response => console.log(response))
+}
 
 </script>
 
@@ -19,7 +32,7 @@ const props = defineProps({
               <router-link to="/authorization" class="router-link">Войти</router-link>
             </li>
             <li>
-              <router-link to="/users" class="router-link">Списки лидеров</router-link>
+              <router-link to="/authorization" class="router-link">Выйти</router-link>
             </li>
             <li>
               <router-link to="/" class="router-link">Играть</router-link>

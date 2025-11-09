@@ -4,10 +4,22 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-
-class User extends Model implements Authenticatable
+use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+class User extends Model implements JWTSubject, Authenticatable
 {
-    protected $fillable = ['name', 'email', 'password'];
+    use HasApiTokens;
+    protected $fillable = ['name', 'email', 'password', 'token'];
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 
     public function getAuthIdentifierName()
     {
