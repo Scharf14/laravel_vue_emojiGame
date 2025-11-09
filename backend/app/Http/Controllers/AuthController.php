@@ -55,11 +55,9 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout(AuthUserRequest $request)
+    public function logout()
     {
-        $request->user()->update([
-            'token' => null,
-        ]);
+        User::updated(['token' => null]);
 
         return response()->json([
             'message' => 'you logged out successfully'

@@ -10,7 +10,7 @@ const props = defineProps({
 const router = useRouter();
 function logout() {
   apiClient.post('/auth/logout')
-      .then(function (response) {
+      .then(function(response) {
         localStorage.removeItem('token')
         router.push('/')
       })
@@ -31,7 +31,7 @@ function logout() {
             <li>
               <router-link to="/authorization" class="router-link">Войти</router-link>
             </li>
-            <li>
+            <li @click="logout">
               <router-link to="/authorization" class="router-link">Выйти</router-link>
             </li>
             <li>

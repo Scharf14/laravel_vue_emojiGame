@@ -20,19 +20,18 @@ class EnsureTokenValid
         $token = $request->header('Authorization');
         if ($token === null) {
             return response()->json([
-                'message' => 'Your token is invalid'
+                'message' => 'Your token is invalid(token===null)'
             ], 401);
         }
         $user = User::where('token', $token)->first();
 //        dd($user);
 
-//        if ($user->token === $token) {
           if ($user) {
             Auth::login($user);
             return $next($request);
         }
         return response()->json([
-            'message' => 'Your token is invalid'
+            'message' => 'Your token is invalid(!$user)'
         ], 401);
 
     }
