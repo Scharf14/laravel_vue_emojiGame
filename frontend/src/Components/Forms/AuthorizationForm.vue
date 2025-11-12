@@ -5,15 +5,16 @@ import apiClient from "../../utils/api.js";
 
 const authUser = reactive({
   email: '',
-  password: ''
+  password: '',
 })
 
 const router = useRouter()
 
 function login() {
   apiClient.post('/auth/login', authUser)
-      .then(function(response){
+      .then(function (response) {
         localStorage.setItem('token', response.data.token)
+        router.push('/')
       })
       .catch(response => console.log(response))
 }

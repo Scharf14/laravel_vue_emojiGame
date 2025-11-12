@@ -3,6 +3,7 @@ import GameView from "@/Components/Pages/GamePage.vue";
 import RegistrationView from "@/Components/Pages/RegistrationPage.vue";
 import AuthorizationView from "@/Components/Pages/AuthorizationPage.vue";
 import StartScreen from "@/Components/Pages/StartScreenPage.vue"
+import UserDataView from "@/Components/Pages/UserDataPage.vue";
 
 const routes = [
     // {path: '/', component: StartScreen},
@@ -10,6 +11,7 @@ const routes = [
     // {path: '/game', component: GameView},
     {path: '/registration', component: RegistrationView},
     {path: '/authorization', component: AuthorizationView},
+    {path: '/userData', component: UserDataView}
 ]
 
 const router = createRouter({

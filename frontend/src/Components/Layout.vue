@@ -1,11 +1,14 @@
 <script setup>
 import apiClient from "@/utils/api.js";
 import {useRouter} from 'vue-router';
+import {ref} from "vue";
 
 const props = defineProps({
   lvlUser: Number,
   exp: Number
 })
+
+const storage = ref(localStorage.getItem('token'))
 
 const router = useRouter();
 function logout() {
@@ -42,7 +45,10 @@ function logout() {
               <br>
               <div class="lvl"> Уровень: {{ lvlUser }}</div>
             </li>
-            <li><a href="#"><img src="../../public/minion.jpeg" alt=""></a></li>
+            <li>
+              <router-link to="/userData"><img src="../../public/nullableUser.jpg"></router-link>
+<!--              <a href="#"><img src="../../public/minion.jpeg" alt=""></a>-->
+            </li>
           </ul>
         </nav>
       </div>

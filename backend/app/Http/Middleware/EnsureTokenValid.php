@@ -17,6 +17,7 @@ class EnsureTokenValid
      */
     public function handle(Request $request, Closure $next): Response
     {
+
         $token = $request->header('Authorization');
         if ($token === null) {
             return response()->json([
@@ -24,7 +25,7 @@ class EnsureTokenValid
             ], 401);
         }
         $user = User::where('token', $token)->first();
-//        dd($user);
+//        dd($user, $token);
 
           if ($user) {
             Auth::login($user);

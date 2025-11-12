@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -50,17 +51,21 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => $user,
-            'token' => $token,
             'message' => 'You have logged in successfully.'
         ]);
     }
 
     public function logout()
     {
-        User::updated(['token' => null]);
+        $user = Auth::user();
+
+        if($user) {
+            $user->update(['token'=> null]);
+        }
 
         return response()->json([
             'message' => 'you logged out successfully'
         ]);
     }
+
 }
