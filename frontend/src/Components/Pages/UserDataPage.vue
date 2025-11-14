@@ -2,51 +2,50 @@
 import Layout from "@/Components/Layout.vue";
 import {reactive, ref} from "vue";
 
-// const user = reactive({
-//   name: 'Ana',
-//   email: 'Ana@mail.ru',
-//   level: '2',
-//   exp: '5000',
-//   avatar: '../../../public/minion.jpeg'
-// })
+const user = reactive({
+  name: 'Ana',
+  email: 'Ana@mail.ru',
+  level: '2',
+  exp: '5000',
+  avatar: '../../../public/minion.jpeg'
+})
 </script>
 
 <template>
   <Layout/>
-<!--  <div class="user-profile-modal">-->
-<!--    <div class="user-card">-->
-<!--      &lt;!&ndash; Кнопка закрытия &ndash;&gt;-->
-<!--      <router-link to="/" class="close-icon">-->
-<!--        <button class="close-btn">x</button>-->
-<!--      </router-link>-->
+  <div class="user-profile-modal">
+    <div class="user-card">
+      <router-link to="/" class="close-icon">
+        <button class="close-btn">x</button>
+      </router-link>
 
-<!--      <div class="avatar-wrapper">-->
-<!--        <img :src="user.avatar" alt="Аватар" class="avatar-img"/>-->
-<!--      </div>-->
+      <div class="avatar-wrapper">
+        <img :src="user.avatar" alt="Аватар" class="avatar-img"/>
+      </div>
 
-<!--      <div class="user-info">-->
-<!--        <h3 class="user-name">{{ user.name }}</h3>-->
-<!--        <p class="user-email">{{ user.email }}</p>-->
+      <div class="user-info">
+        <h3 class="user-name">{{ user.name }}</h3>
+        <p class="user-email">{{ user.email }}</p>
 
-<!--        <div class="level-exp">-->
-<!--          <div class="level-row">-->
-<!--            <span class="level-label">Уровень</span>-->
-<!--            <span class="level-value">{{ user.level }}</span>-->
-<!--          </div>-->
+        <div class="level-exp">
+          <div class="level-row">
+            <span class="level-label">Уровень</span>
+            <span class="level-value">{{ user.level }}</span>
+          </div>
 
-<!--          <div class="exp-bar-container">-->
-<!--            <div class="exp-bar">-->
-<!--              <div-->
-<!--                  class="exp-fill"-->
-<!--                  :style="{ width: user.exp/100 + '%' }"-->
-<!--              ></div>-->
-<!--            </div>-->
-<!--            <span class="exp-text">{{ user.exp }} EXP</span>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
+          <div class="exp-bar-container">
+            <div class="exp-bar">
+              <div
+                  class="exp-fill"
+                  :style="{ width: user.exp/100 + '%' }"
+              ></div>
+            </div>
+            <span class="exp-text">{{ user.exp }} EXP</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>

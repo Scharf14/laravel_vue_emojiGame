@@ -13,8 +13,11 @@ const router = useRouter()
 function login() {
   apiClient.post('/auth/login', authUser)
       .then(function (response) {
+        localStorage.setItem('stat', JSON.stringify(response.data.stat))
+        localStorage.setItem('user', JSON.stringify(response.data.user))
         localStorage.setItem('token', response.data.token)
         router.push('/')
+
       })
       .catch(response => console.log(response))
 }

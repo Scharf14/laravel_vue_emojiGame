@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const server = 'http://localhost:8000/api'
-console.log(localStorage.getItem('token'))
+
 const apiClient = axios.create({
     baseURL: server,
 });
@@ -9,8 +9,6 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token')
-        console.log('Interceptor token:', token)
-        console.log('All localStorage:', localStorage)
         if (token) {
             config.headers.Authorization = token;
         }

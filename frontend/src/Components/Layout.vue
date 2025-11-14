@@ -1,24 +1,29 @@
 <script setup>
 import apiClient from "@/utils/api.js";
 import {useRouter} from 'vue-router';
-import {ref} from "vue";
+import {ref, onMounted} from "vue";
 
 const props = defineProps({
   lvlUser: Number,
   exp: Number
 })
 
-const storage = ref(localStorage.getItem('token'))
 
 const router = useRouter();
+
 function logout() {
   apiClient.post('/auth/logout')
-      .then(function(response) {
+      .then(() => {
         localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        localStorage.removeItem('stat')
         router.push('/')
       })
       .catch(response => console.log(response))
 }
+
+const stat = JSON.parse(localStorage.getItem('stat'))
+console.log(stat)
 
 </script>
 
@@ -41,13 +46,12 @@ function logout() {
               <router-link to="/" class="router-link">Играть</router-link>
             </li>
             <li>
-              <div class="exp"> Кол-во exp: {{ exp }}</div>
+              <div class="exp"> Кол-во exp: {{ stat?.experience }}</div>
               <br>
-              <div class="lvl"> Уровень: {{ lvlUser }}</div>
+              <div class="lvl"> Уровень: {{ stat?.level }}</div>
             </li>
             <li>
               <router-link to="/userData"><img src="../../public/nullableUser.jpg"></router-link>
-<!--              <a href="#"><img src="../../public/minion.jpeg" alt=""></a>-->
             </li>
           </ul>
         </nav>
