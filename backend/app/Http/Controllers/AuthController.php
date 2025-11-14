@@ -22,9 +22,12 @@ class AuthController extends Controller
 
         $user->token = $token;
 
+        $userStat = $user->userStat()->create(['level' => 1, 'experience'=>0]);
+
         $user->save();
 
         return response()->json([
+            'stat' => $userStat,
             'user' => $user,
             'token' => $token,
             'message' => 'registration successful'
@@ -47,10 +50,13 @@ class AuthController extends Controller
 
         $user->token = $token;
 
-        $user->save();
+        $userStat = $user->userStat;
 
+        $user->save();
         return response()->json([
+            'stat' => $userStat,
             'user' => $user,
+            'token' => $token,
             'message' => 'You have logged in successfully.'
         ]);
     }
@@ -59,8 +65,8 @@ class AuthController extends Controller
     {
         $user = Auth::user();
 
-        if($user) {
-            $user->update(['token'=> null]);
+        if ($user) {
+            $user->update(['token' => null]);
         }
 
         return response()->json([

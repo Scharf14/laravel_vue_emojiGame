@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
 
+
 class User extends Model implements Authenticatable
 {
     use HasApiTokens;
-    protected $fillable = ['name', 'email', 'password']; //'token'
+    protected $fillable = ['name', 'email', 'password', 'token'];
 
     public function userStat(): HasOne
     {
