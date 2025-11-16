@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthUserRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
+use App\Models\UserStat;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -19,14 +20,16 @@ class AuthController extends Controller
         $user = User::create($data);
 
         $token = Str::random(10);
-
         $user->token = $token;
 
+
         $userStat = $user->userStat()->create(['level' => 1, 'experience'=>0]);
+        $avatar = $user->avatar()->create(['avatar' => mt_rand(2, 7) . '.jpeg']);
 
         $user->save();
 
         return response()->json([
+            'avatar' => $avatar,
             'stat' => $userStat,
             'user' => $user,
             'token' => $token,
@@ -47,13 +50,14 @@ class AuthController extends Controller
         }
 
         $token = Str::random(10);
-
         $user->token = $token;
 
         $userStat = $user->userStat;
+        $avatar = $user->avatar;
 
         $user->save();
         return response()->json([
+            'avatar' => $avatar,
             'stat' => $userStat,
             'user' => $user,
             'token' => $token,

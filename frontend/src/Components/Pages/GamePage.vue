@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue'
+import {reactive, ref} from 'vue'
 import Level from '../Level.vue'
 import Winstreak from '../Winstreak.vue';
 import AnswerOptions from '../AnswerOptions.vue';

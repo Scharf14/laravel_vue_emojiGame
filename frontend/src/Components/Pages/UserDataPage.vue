@@ -1,14 +1,31 @@
 <script setup>
 import Layout from "@/Components/Layout.vue";
-import {reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
+import apiClient from "@/utils/api.js";
 
-const user = reactive({
-  name: 'Ana',
-  email: 'Ana@mail.ru',
-  level: '2',
-  exp: '5000',
-  avatar: '../../../public/minion.jpeg'
-})
+// const user = reactive({
+//   name: 'Ana',
+//   email: 'Ana@mail.ru',
+//   level: '2',
+//   exp: '5000',
+//   avatar: localStorage
+// })
+
+// onMounted(() => {
+//   apiClient('/profile/show')
+//       .then((response) => {
+//         localStorage.setItem('avatar')
+//       })
+//       .catch((response) => { console.log(response) })
+// })
+
+const name = (JSON.parse(localStorage.getItem('avatar')))?.avatar ?? '../../public/1.jpeg'
+
+
+const stat = (JSON.parse(localStorage.getItem('stat')))
+const user = (JSON.parse(localStorage.getItem('user')))
+console.log(stat)
+console.log(user)
 </script>
 
 <template>
@@ -20,27 +37,28 @@ const user = reactive({
       </router-link>
 
       <div class="avatar-wrapper">
-        <img :src="user.avatar" alt="Аватар" class="avatar-img"/>
+        <img :src="name" alt="Аватар" class="avatar-img"/>
       </div>
 
       <div class="user-info">
-        <h3 class="user-name">{{ user.name }}</h3>
-        <p class="user-email">{{ user.email }}</p>
+        <h3 class="user-name">{{ user?.name }}</h3>
+        <p class="user-email">{{ user?.email }}</p>
 
         <div class="level-exp">
           <div class="level-row">
             <span class="level-label">Уровень</span>
-            <span class="level-value">{{ user.level }}</span>
+            <span class="level-value">{{ stat?.level }}</span>
           </div>
 
           <div class="exp-bar-container">
             <div class="exp-bar">
               <div
                   class="exp-fill"
-                  :style="{ width: user.exp/100 + '%' }"
-              ></div>
+                  :style="{ }">
+
+              </div>
             </div>
-            <span class="exp-text">{{ user.exp }} EXP</span>
+            <span class="exp-text">{{ stat?.experience }} EXP</span>
           </div>
         </div>
       </div>

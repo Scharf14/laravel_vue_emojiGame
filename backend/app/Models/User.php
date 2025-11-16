@@ -18,6 +18,11 @@ class User extends Model implements Authenticatable
         return $this->hasOne(UserStat::class);
     }
 
+    public function avatar(): HasOne
+    {
+        return $this->hasOne(Avatar::class);
+    }
+
     public function getAuthIdentifierName()
     {
         // TODO: Implement getAuthIdentifierName() method.

@@ -1,7 +1,7 @@
 <script setup>
 import apiClient from "@/utils/api.js";
 import {useRouter} from 'vue-router';
-import {ref, onMounted} from "vue";
+import {ref, onMounted, computed} from "vue";
 
 const props = defineProps({
   lvlUser: Number,
@@ -14,16 +14,26 @@ const router = useRouter();
 function logout() {
   apiClient.post('/auth/logout')
       .then(() => {
+        localStorage.removeItem('avatar')
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         localStorage.removeItem('stat')
+        localStorage.removeItem('progress')
         router.push('/')
       })
       .catch(response => console.log(response))
 }
 
-const stat = JSON.parse(localStorage.getItem('stat'))
-console.log(stat)
+const stat = ref(JSON.parse(localStorage.getItem('stat')))
+
+const pathToImage = computed(() => {
+  const name = (JSON.parse(localStorage.getItem('avatar')))?.avatar
+  const defaultName = '../../public/1.jpeg'
+  if(name){
+    return '../../public/' + name
+  }
+  return defaultName
+})
 
 </script>
 
@@ -51,7 +61,7 @@ console.log(stat)
               <div class="lvl"> Уровень: {{ stat?.level }}</div>
             </li>
             <li>
-              <router-link to="/userData"><img src="../../public/nullableUser.jpg"></router-link>
+              <router-link to="/userData"><img :src="pathToImage"></router-link>
             </li>
           </ul>
         </nav>
