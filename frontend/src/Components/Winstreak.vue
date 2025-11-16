@@ -1,16 +1,12 @@
 <script setup>
 import {ref} from 'vue'
 
-const props = defineProps({
-  winStreak: Number
-})
-
 </script>
 
 <template>
   <div class="win-container">
     <div>
-      <p>Винстрик: {{ winStreak }}</p>
+      <p>Опыт: {{ winStreak }}</p>
     </div>
   </div>
 </template>

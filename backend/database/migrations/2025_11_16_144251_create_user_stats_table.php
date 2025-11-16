@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->integer('experience')->default(0);
+            $table->integer('winstreak')->default(0);
             $table->integer('level')->default(1);
+
             $table->foreignId('user_id')->unique()->constrained()->onDelete('cascade');
         });
     }

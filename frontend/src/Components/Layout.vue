@@ -56,7 +56,7 @@ const pathToImage = computed(() => {
               <router-link to="/" class="router-link">Играть</router-link>
             </li>
             <li>
-              <div class="exp"> Кол-во exp: {{ stat?.experience }}</div>
+              <div class="exp"> Серия побед: {{  }}</div>
               <br>
               <div class="lvl"> Уровень: {{ stat?.level }}</div>
             </li>

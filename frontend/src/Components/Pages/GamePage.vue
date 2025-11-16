@@ -161,8 +161,7 @@ function nextLevel() {
       </Level>
 
       <Winstreak
-          class="component-card winstreak"
-          :winStreak="progress.winStreak"
+          class="component-card experience"
       >
 
       </Winstreak>
@@ -214,7 +213,7 @@ function nextLevel() {
   font-weight: bold;
 }
 
-.winstreak {
+.experience {
   background: #EE9B01;
   color: white;
   font-weight: bold;
