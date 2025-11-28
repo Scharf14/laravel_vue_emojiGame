@@ -1,14 +1,17 @@
 <script setup>
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
+import apiClient from "@/utils/api.js";
+import axios from "axios";
+import router from "@/router.js";
 
 const props = defineProps({
   answerOptions: Array
 })
 
-const emit = defineEmits(['sendAnswer'])
+const emit = defineEmits(['correctAnswer'])
 
 function sendAnswer(answer) {
-  emit('sendAnswer', answer)
+  emit('correctAnswer', answer)
 }
 
 

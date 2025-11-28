@@ -5,8 +5,10 @@ import Authorization from "@/Components/Forms/AuthorizationForm.vue";
 </script>
 
 <template>
-  <Layout />
-  <Authorization />
+  <Layout>
+    <Authorization />
+  </Layout>
+
 </template>
 
 <style scoped>

@@ -1,12 +1,15 @@
 <script setup>
 import {ref} from 'vue'
 
+const props = defineProps({
+  experience: Number
+})
 </script>
 
 <template>
   <div class="win-container">
     <div>
-      <p>Опыт: {{ winStreak }}</p>
+      <p>Опыт: {{ props.experience }}</p>
     </div>
   </div>
 </template>

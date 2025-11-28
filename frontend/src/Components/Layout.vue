@@ -4,8 +4,10 @@ import {useRouter} from 'vue-router';
 import {ref, onMounted, computed} from "vue";
 
 const props = defineProps({
-  lvlUser: Number,
-  exp: Number
+  level: Number,
+  experience: Number,
+  winstreak: Number,
+  avatarPath: String
 })
 
 
@@ -14,26 +16,17 @@ const router = useRouter();
 function logout() {
   apiClient.post('/auth/logout')
       .then(() => {
-        localStorage.removeItem('avatar')
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         localStorage.removeItem('stat')
         localStorage.removeItem('progress')
-        router.push('/')
+        router.push('/authorization')
       })
       .catch(response => console.log(response))
 }
 
-const stat = ref(JSON.parse(localStorage.getItem('stat')))
 
-const pathToImage = computed(() => {
-  const name = (JSON.parse(localStorage.getItem('avatar')))?.avatar
-  const defaultName = '../../public/1.jpeg'
-  if(name){
-    return '../../public/' + name
-  }
-  return defaultName
-})
+
 
 </script>
 
@@ -44,6 +37,9 @@ const pathToImage = computed(() => {
         <nav>
           <ul>
             <li>
+              <router-link to="/admin" class="router-link">Админ</router-link>
+            </li>
+            <li>
               <router-link to="/registration" class="router-link">Зарегистрироваться</router-link>
             </li>
             <li>
@@ -53,21 +49,22 @@ const pathToImage = computed(() => {
               <router-link to="/authorization" class="router-link">Выйти</router-link>
             </li>
             <li>
-              <router-link to="/" class="router-link">Играть</router-link>
+              <router-link to="/game" class="router-link">Играть</router-link>
             </li>
             <li>
-              <div class="exp"> Серия побед: {{  }}</div>
+              <div class="exp"> Серия побед: {{ props.winstreak }}</div>
               <br>
-              <div class="lvl"> Уровень: {{ stat?.level }}</div>
+              <div class="lvl"> Уровень: {{ props.level }}</div>
             </li>
             <li>
-              <router-link to="/userData"><img :src="pathToImage"></router-link>
+              <router-link to="/userData"><img src="#"></router-link>
             </li>
           </ul>
         </nav>
       </div>
     </header>
   </div>
+  <slot></slot>
 </template>
 
 <style scoped>

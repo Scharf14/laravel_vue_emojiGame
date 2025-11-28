@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserStat extends Model
 {
-    protected $fillable = ['experience', 'level'];
+    protected $fillable = ['experience', 'level', 'winstreak'];
 }

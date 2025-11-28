@@ -2,68 +2,79 @@
 import Layout from "@/Components/Layout.vue";
 import {computed, onMounted, reactive, ref} from "vue";
 import apiClient from "@/utils/api.js";
+import router from "@/router.js";
 
-// const user = reactive({
-//   name: 'Ana',
-//   email: 'Ana@mail.ru',
-//   level: '2',
-//   exp: '5000',
-//   avatar: localStorage
-// })
-
-// onMounted(() => {
-//   apiClient('/profile/show')
-//       .then((response) => {
-//         localStorage.setItem('avatar')
-//       })
-//       .catch((response) => { console.log(response) })
-// })
-
-const name = (JSON.parse(localStorage.getItem('avatar')))?.avatar ?? '../../public/1.jpeg'
+let avatar = ref('')
+let user = ref({})
+let stats = ref({
+  level: 1,
+  winstreak: 0,
+  experience: 0
+})
 
 
-const stat = (JSON.parse(localStorage.getItem('stat')))
-const user = (JSON.parse(localStorage.getItem('user')))
-console.log(stat)
-console.log(user)
+function getData() {
+  apiClient.get('http://localhost:8000/api/profile/show')
+      .then(response => {
+        stats.value = response.data.stats
+        user.value = response.data.user
+      }).catch(response => {
+    console.log(response)
+  })
+}
+
+function goBack() {
+  router.go(-1) // изменить на router-link
+}
+
+onMounted(() => {
+  getData()
+})
+
+
 </script>
 
 <template>
-  <Layout/>
-  <div class="user-profile-modal">
-    <div class="user-card">
-      <router-link to="/" class="close-icon">
-        <button class="close-btn">x</button>
-      </router-link>
+  <Layout
+      :level="stats.level"
+      :experience="stats.experience"
+      :winstreak="stats.winstreak"
+      :avatarPath="avatar"
+  >
+    <div class="user-profile-modal">
+      <div class="user-card">
+        <button @click="goBack" class="close-btn">x</button>
 
-      <div class="avatar-wrapper">
-        <img :src="name" alt="Аватар" class="avatar-img"/>
-      </div>
+        <div class="avatar-wrapper">
+          <img src="#" alt="Аватар" class="avatar-img"/>
+        </div>
 
-      <div class="user-info">
-        <h3 class="user-name">{{ user?.name }}</h3>
-        <p class="user-email">{{ user?.email }}</p>
+        <div class="user-info">
+          <h3 class="user-name">{{ user.name }}</h3>
+          <p class="user-email">{{ user.email }}</p>
 
-        <div class="level-exp">
-          <div class="level-row">
-            <span class="level-label">Уровень</span>
-            <span class="level-value">{{ stat?.level }}</span>
-          </div>
-
-          <div class="exp-bar-container">
-            <div class="exp-bar">
-              <div
-                  class="exp-fill"
-                  :style="{ }">
-
-              </div>
+          <div class="level-exp">
+            <div class="level-row">
+              <span class="level-label">Уровень</span>
+              <span class="level-value">{{ stats.level }}</span>
             </div>
-            <span class="exp-text">{{ stat?.experience }} EXP</span>
+
+            <div class="exp-bar-container">
+              <div class="exp-bar">
+                <div
+                    class="exp-fill"
+                    :style="{}">
+
+                </div>
+              </div>
+              <span class="exp-text">{{ stats.experience }} EXP</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </Layout>
+
 </template>
 
 <style scoped>

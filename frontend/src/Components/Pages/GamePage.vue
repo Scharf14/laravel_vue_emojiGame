@@ -1,47 +1,45 @@
 <script setup>
-import {reactive, ref} from 'vue'
+import {onMounted, reactive, ref} from 'vue'
 import Level from '../Level.vue'
 import Winstreak from '../Winstreak.vue';
 import AnswerOptions from '../AnswerOptions.vue';
 import Layout from '../Layout.vue';
-import Emoji from '../Emoji.vue'
+import Emoji from '../Emoji.vue';
+import axios from "axios";
+import apiClient from "@/utils/api.js";
 
-const films = ref([
-  {id: 0, film_file_path: '...', difficult_id: 0, name: 'Титаник', emojies: '🚢🧊💔'},
-  {id: 1, film_file_path: '...', difficult_id: 0, name: 'Гарри Подтёр', emojies: '🧙‍♂️⚡️👓'},
-  {id: 2, film_file_path: '...', difficult_id: 0, name: 'Принцесса и лягушка', emojies: '👸🐸💋'},
-  {id: 3, film_file_path: '...', difficult_id: 1, name: 'Одержимость', emojies: '🥁🔥'},
-  {id: 4, film_file_path: '...', difficult_id: 1, name: 'Кунг-фу панда', emojies: '🐼🥋🍜'},
-  {id: 5, film_file_path: '...', difficult_id: 1, name: 'Алладин', emojies: '🧞‍♂️🔮🌴'},
-  {id: 6, film_file_path: '...', difficult_id: 1, name: 'Рататуй', emojies: '🐀👦🍳'},
-  {id: 7, film_file_path: '...', difficult_id: 2, name: 'В поисках Немо', emojies: '🐠🐟🔍'},
-  {id: 8, film_file_path: '...', difficult_id: 2, name: 'Один дома', emojies: '👦🏠✈️'},
-  {id: 9, film_file_path: '...', difficult_id: 2, name: 'Трое в лодке, не считая собаки', emojies: '3️⃣🚣🐕'},
-  {id: 10, film_file_path: '...', difficult_id: 2, name: 'Охотники за привидениями', emojies: '👻🚫'},
-  {id: 11, film_file_path: '...', difficult_id: 3, name: 'Крепкий орешек', emojies: '💪🥜'},
-  {id: 12, film_file_path: '...', difficult_id: 3, name: 'Достучаться до небес', emojies: '👊☁️'},
-  {id: 13, film_file_path: '...', difficult_id: 3, name: 'Молчание ягнят', emojies: '🔇🐑'},
-  {id: 14, film_file_path: '...', difficult_id: 3, name: 'Планета обезьян', emojies: '🌍🐒'},
-  {id: 15, film_file_path: '...', difficult_id: 4, name: 'В джазе только девушки', emojies: '🎺👩‍❤️‍👩'},
-  {id: 16, film_file_path: '...', difficult_id: 4, name: 'Пила', emojies: '🪚⚰️'},
-  {id: 17, film_file_path: '...', difficult_id: 4, name: 'Хороший, плохой, злой', emojies: '😇😈😠'},
-  {id: 18, film_file_path: '...', difficult_id: 4, name: 'Эдвард Руки-ножницы', emojies: '👦🏻👐🏻✂️'}
-])
-
-const progress = ref({
-  lvlGame: 0,
-  lvlUser: 0,
-  winStreak: 0,
-  exp: 0
+// const correctFilm = ref(getRandomFilmByUserLevel())
+// const film = ref(correctFilm.value.films)
+let user = ref({})
+let answerOptions = ref([]) // список с вариантами ответов из запроса
+let frameFilm = ref(null) // имя фильма из которого был взят кадр
+let stats = ref({
+  level: 1,
+  winstreak: 0,
+  experience: 0
 })
 
-const savedData = localStorage.getItem('progress')
+function getFilms() {
+  apiClient.get('http://localhost:8000/api/game/index')
+      .then(response => {
+        answerOptions.value = response.data.films
+        frameFilm.value = response.data.nameFilm.id
+        stats.value = response.data.stats
+        user.value = response.data.user
+        console.log(response.data.nameFilm)
+      }).catch(response => {
+    console.log(response)
+  })
+}
+
+const savedData = localStorage.getItem('stats')
+
 if (savedData) {
-  progress.value = JSON.parse(savedData)
+  stats.value = JSON.parse(savedData)
 }
 
 function saveData() {
-  localStorage.setItem('progress', JSON.stringify(progress.value))
+  localStorage.setItem('stats', JSON.stringify(stats.value))
 }
 
 function getRandomFilmByUserLevel() {
@@ -50,33 +48,32 @@ function getRandomFilmByUserLevel() {
   return activeFilms[randomIndex]
 }
 
+
 function getRandomFilm(correctFilmId = null) {
-  const randomIndex = Math.floor(Math.random() * films.value.length - (correctFilmId ? 2 : 1))
+  const randomIndex = Math.floor(Math.random() * films.value.length)
   if (correctFilmId !== null) {
     return films.value.filter(film => film.id !== correctFilmId)[randomIndex]
   }
   return films.value[randomIndex]
 }
 
-const correctFilm = ref(getRandomFilmByUserLevel())
-const emoji = ref(correctFilm.value.emojies)
 
-function createAnswerOptions() {
-  const answerOptions = []
+// function createAnswerOptions() {
+//   const answerOptions = []
+//
+//   while (answerOptions.length < 2) {
+//     const wrongFilm = getRandomFilm(correctFilm.value.id)
+//
+//     if (!answerOptions.includes(wrongFilm.name)) {
+//       answerOptions.push(wrongFilm.name)
+//     }
+//   }
+//   const randomIndexOptions = Math.floor(Math.random() * 3)
+//   answerOptions.splice(randomIndexOptions, 0, correctFilm.value.name)
+//   return answerOptions
+// }
 
-  while (answerOptions.length < 2) {
-    const wrongFilm = getRandomFilm(correctFilm.value.id)
-
-    if (!answerOptions.includes(wrongFilm.name)) {
-      answerOptions.push(wrongFilm.name)
-    }
-  }
-  const randomIndexOptions = Math.floor(Math.random() * 3)
-  answerOptions.splice(randomIndexOptions, 0, correctFilm.value.name)
-  return answerOptions
-}
-
-const answerOptions = ref(createAnswerOptions())
+// const answerOptions = ref(createAnswerOptions())
 
 function changeFilm(answer) {
   if (answer === correctFilm.value.name) {
@@ -85,7 +82,7 @@ function changeFilm(answer) {
     progress.value.winStreak = 0
   }
   correctFilm.value = getRandomFilmByUserLevel()
-  emoji.value = correctFilm.value.emojies
+  film.value = correctFilm.value.films
   answerOptions.value = createAnswerOptions()
   saveData()
 }
@@ -143,44 +140,54 @@ function nextLevel() {
   saveData()
 }
 
+onMounted(() => {
+  getFilms()
+})
+
 </script>
 
 <template>
   <div class="container">
     <Layout
-        :lvlUser="progress.lvlUser"
-        :exp="progress.exp"
+        :level="stats.level"
+        :experience="stats.experience"
+        :winstreak="stats.winstreak"
+
     >
-    </Layout>
-    <div class="stats-row">
-      <Level
-          class="component-card level"
-          :lvlGame="progress.lvlGame"
-      >
+      <div class="stats-row">
+        <Level
+            class="component-card level"
+            :level="stats.level"
+        >
 
-      </Level>
+        </Level>
 
-      <Winstreak
-          class="component-card experience"
-      >
+        <Winstreak
+            class="component-card experience"
+            :experience="stats.experience"
+        >
 
-      </Winstreak>
-    </div>
+        </Winstreak>
+      </div>
 
-    <Emoji
-        class="component-card emoji-container"
-        :emoji="emoji"
-    />
-    <AnswerOptions
-        class="component-card answer-options"
-        :answerOptions="answerOptions"
-        @sendAnswer="answer => {
-          addExp(answer)
-          changeFilm(answer)
-          nextLevel()
+      <Emoji
+          class="component-card emoji-container"
+          :frameFilm="frameFilm"
+      />
+
+      <AnswerOptions
+          class="component-card answer-options"
+          :answerOptions="answerOptions"
+          @correctAnswer=" answer => {
+
+          // addExp(answer)
+          // changeFilm(answer)
+          // nextLevel()
         }"
-    >
-    </AnswerOptions>
+      >
+      </AnswerOptions>
+    </Layout>
+
   </div>
 </template>
 

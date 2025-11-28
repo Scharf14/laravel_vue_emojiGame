@@ -1,33 +1,40 @@
 <script setup>
-import {ref} from 'vue'
+import {computed, ref} from 'vue'
+import apiClient from "@/utils/api.js";
 
 
 const props = defineProps({
-  emoji: String
+  frameFilm: Number
 })
-
 
 </script>
 
 <template>
-  <div class="emoji-container">
+  <div class="film-container">
     <div>
-      <p class="emoji">{{ emoji }}</p>
+      <img :src="pathFilm">
     </div>
   </div>
 </template>
 
 <style scoped>
 
-.emoji-container {
+.film-container {
   margin-top: 200px;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
-.emoji {
-  font-size: 40px;
-  letter-spacing: 20px;
+.film-container img {
+  max-width: 350px;
+  max-height: 525px;
+  width: auto;
+  height: auto;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  object-fit: contain;
+  border: 3px solid #68904D;
 }
 
 </style>

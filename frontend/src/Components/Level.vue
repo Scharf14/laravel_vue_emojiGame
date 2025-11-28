@@ -1,8 +1,8 @@
 <script setup>
-import {ref} from 'vue'
+import {computed, ref} from 'vue'
 
 const props = defineProps({
-  lvlGame: Number
+  level: Number
 })
 
 </script>
@@ -10,7 +10,7 @@ const props = defineProps({
 <template>
   <div class="levelContainer">
     <div>
-      <p>Уровень: {{ lvlGame }}</p>
+      <p>Уровень: {{ level }}</p>
     </div>
   </div>
 </template>

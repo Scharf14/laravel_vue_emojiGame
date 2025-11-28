@@ -14,12 +14,18 @@ Route::prefix('/auth')->controller(\App\Http\Controllers\AuthController::class)-
     Route::post('/logout', 'logout')->middleware(\App\Http\Middleware\EnsureTokenValid::class);
 });
 
-Route::prefix('/profile')->controller(\App\Http\Controllers\ProfileController::class)->group(function() {
-   Route::get('/show', 'show')->middleware(\App\Http\Middleware\EnsureTokenValid::class);
+Route::prefix('/profile')->controller(\App\Http\Controllers\ProfileController::class)->middleware(\App\Http\Middleware\EnsureTokenValid::class)->group(function() {
+   Route::get('/show', 'show');
 });
-//Route::get('/profile/show', function() {
-//    echo 'hello';
-//});
+
+
+Route::prefix('/game')->controller(\App\Http\Controllers\GameController::class)->middleware(\App\Http\Middleware\EnsureTokenValid::class)->group(function() {
+   Route::get('/index', 'index');
+});
+
+Route::prefix('/admin')->controller(\App\Http\Controllers\AdminController::class)->middleware(\App\Http\Middleware\EnsureTokenValid::class)->group(function() {
+    Route::post('/film', 'film');
+});
 
 
 

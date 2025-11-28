@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UserStat;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -24,12 +25,13 @@ class AuthController extends Controller
 
 
         $userStat = $user->userStat()->create(['level' => 1, 'experience'=>0]);
-        $avatar = $user->avatar()->create(['avatar' => mt_rand(2, 7) . '.jpeg']);
+
+        Storage::disk('local')->put('example.png', 'Contents');
+
 
         $user->save();
 
         return response()->json([
-            'avatar' => $avatar,
             'stat' => $userStat,
             'user' => $user,
             'token' => $token,
@@ -53,11 +55,9 @@ class AuthController extends Controller
         $user->token = $token;
 
         $userStat = $user->userStat;
-        $avatar = $user->avatar;
 
         $user->save();
         return response()->json([
-            'avatar' => $avatar,
             'stat' => $userStat,
             'user' => $user,
             'token' => $token,

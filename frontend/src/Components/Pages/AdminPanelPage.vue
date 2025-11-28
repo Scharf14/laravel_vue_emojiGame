@@ -1,13 +1,13 @@
 <script setup>
 import Layout from "@/Components/Layout.vue";
-import { ref, computed } from 'vue'
+import AdminPanel from "@/Components/AdminPanel.vue";
 
 </script>
 
 <template>
-
-  <RouterView/>
-
+  <Layout>
+    <AdminPanel/>
+  </Layout>
 </template>
 
 <style scoped>

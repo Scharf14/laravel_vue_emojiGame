@@ -15,15 +15,13 @@ function login() {
       .then(function (response) {
         localStorage.setItem('stat', JSON.stringify(response.data.stat))
         localStorage.setItem('user', JSON.stringify(response.data.user))
-        localStorage.setItem('avatar', JSON.stringify(response.data.avatar))
         localStorage.setItem('token', response.data.token)
-        router.push('/')
+        router.push('/game')
 
       })
       .catch(response => console.log(response))
 }
 
-console.log(JSON.stringify(localStorage.getItem(('avatar'))))
 
 </script>
 

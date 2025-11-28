@@ -12,8 +12,12 @@ class ProfileController extends Controller
     public function show()
     {
         $user = Auth::user();
-        if (Auth::check()) {
-            return response()->json(['user' => $user]);
-        }
+        $stats = $user->userStat;
+//        dd($avatar);
+
+        return response()->json([
+           'user' => $user,
+           'stats' => $stats,
+        ]);
     }
 }

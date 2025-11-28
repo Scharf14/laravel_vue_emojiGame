@@ -4,8 +4,10 @@ import Registration from "@/Components/Forms/RegistrationForm.vue";
 </script>
 
 <template>
-  <Layout/>
-  <Registration/>
+  <Layout>
+    <Registration/>
+  </Layout>
+
 </template>
 
 <style scoped>
