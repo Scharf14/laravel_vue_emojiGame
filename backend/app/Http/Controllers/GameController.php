@@ -2,48 +2,55 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreFilmRequest;
 use App\Models\UserStat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Film;
+use Illuminate\Support\Facades\Storage;
+use Nette\Utils\Random;
 
 class GameController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function getGameData()
     {
-        $films = ['Крестный отец', 'Зеленая миля', 'Остров проклятых', 'Зеленый слоник', 'Смертельный парад'];
+        $films = Film::inRandomOrder()->limit(4)->get();
+        $correctFilm = $films->random();
+        $correctFilmId = $correctFilm->id;
 
-        $nameFilm = Film::inRandomOrder()->first();//
-        $user = Auth::user();
-        $stats = $user->userStat;
-
-//        dd($stats);
+        foreach ($films as $film) {
+            $film->is_correct = ($film->id === $correctFilmId);
+        }
 
         return response()->json([
-           'films' => $films,
-            'nameFilm' => $nameFilm,
-            'stats' => $stats,
-            'user' => $user,
+            'films' => $films,
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function getFrame(Request $request)
     {
-        //
+        $goodId = $request->get('id');
+
+        $goodFilm = Film::find($goodId);
+
+        $goodFilmFrame = Storage::disk('public')->path($goodFilm->path_to_film);
+        return response()->file($goodFilmFrame);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function getFilm()
     {
-        //
+        $lastUser = Film::latest()->first();
+
+        $localPath = Storage::disk('public')->path($lastUser->path_to_film);
+
+        $lastUser = storage_path($lastUser->path_to_film);
+
+        return response()->json([
+            'lastUser' => $lastUser,
+        ]);
     }
 
     /**
@@ -51,7 +58,7 @@ class GameController extends Controller
      */
     public function show(string $id)
     {
-        //
+
     }
 
     /**

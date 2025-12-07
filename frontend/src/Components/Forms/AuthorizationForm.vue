@@ -15,7 +15,7 @@ function login() {
       .then(function (response) {
         localStorage.setItem('stat', JSON.stringify(response.data.stat))
         localStorage.setItem('user', JSON.stringify(response.data.user))
-        localStorage.setItem('token', response.data.token)
+        localStorage.setItem('token', JSON.stringify(response.data.token))
         router.push('/game')
 
       })

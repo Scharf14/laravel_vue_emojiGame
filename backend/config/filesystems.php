@@ -59,6 +59,12 @@ return [
             'throw' => false,
             'report' => false,
         ],
+        'films' => [
+          'driver' => 'local',
+          'root' => storage_path('app/public/films'),
+            'url' => env('APP_URL').'/storage',
+
+        ],
 
     ],
 

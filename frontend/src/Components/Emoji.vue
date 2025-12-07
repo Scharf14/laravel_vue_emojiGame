@@ -1,10 +1,10 @@
 <script setup>
-import {computed, ref} from 'vue'
+import {computed, onUnmounted, ref} from 'vue'
 import apiClient from "@/utils/api.js";
 
 
 const props = defineProps({
-  frameFilm: Number
+  imageUrl: String
 })
 
 </script>
@@ -12,9 +12,10 @@ const props = defineProps({
 <template>
   <div class="film-container">
     <div>
-      <img :src="pathFilm">
+      <img :src="imageUrl" alt="">
     </div>
   </div>
+
 </template>
 
 <style scoped>

@@ -17,7 +17,6 @@ const addMovie = () => {
   data.append('difficult_id', newMovie.difficult_id)
   data.append('path_to_film', newMovie.path_to_film)
 
-  console.log(newMovie.path_to_film.name)
   apiClient.post('/admin/film', newMovie, {
     headers: {
       "Content-Type": 'multipart/form-data'

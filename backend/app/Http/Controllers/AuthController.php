@@ -24,10 +24,7 @@ class AuthController extends Controller
         $user->token = $token;
 
 
-        $userStat = $user->userStat()->create(['level' => 1, 'experience'=>0]);
-
-        Storage::disk('local')->put('example.png', 'Contents');
-
+        $userStat = $user->userStat()->create(['level' => 1, 'experience' => 0, 'winstreak' => 0]);
 
         $user->save();
 

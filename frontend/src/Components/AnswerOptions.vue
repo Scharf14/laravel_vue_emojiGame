@@ -1,18 +1,18 @@
 <script setup>
-import {ref, onMounted} from 'vue'
+import {ref, onMounted, computed} from 'vue'
 import apiClient from "@/utils/api.js";
 import axios from "axios";
 import router from "@/router.js";
 
 const props = defineProps({
-  answerOptions: Array
+  films: Array
 })
 
-const emit = defineEmits(['correctAnswer'])
-
-function sendAnswer(answer) {
-  emit('correctAnswer', answer)
-}
+// const emit = defineEmits(['correctAnswer'])
+//
+// function sendAnswer(answer) {
+//   emit('correctAnswer', answer)
+// }
 
 
 </script>
@@ -23,10 +23,10 @@ function sendAnswer(answer) {
       <h2>Варианты ответа</h2>
       <div class="answers">
         <button
-            v-for="answer in answerOptions"
+            v-for="film in films"
             @click="sendAnswer(answer)"
         >
-          {{ answer }}
+          {{ film }}
         </button>
       </div>
     </div>

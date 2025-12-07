@@ -12,8 +12,7 @@ class AdminController extends Controller
     {
        $data = $request->validated();
        $file = $request->file('path_to_film');
-       $filePath = $file->storeAs('films', $file->getClientOriginalName());
-
+       $filePath = $file->storeAs('films', $file->getClientOriginalName(), 'public');
        $film = Film::create([
            'name' => $request->name,
            'difficult_id' => $request->difficult_id,

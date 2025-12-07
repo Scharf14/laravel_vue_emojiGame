@@ -20,12 +20,17 @@ Route::prefix('/profile')->controller(\App\Http\Controllers\ProfileController::c
 
 
 Route::prefix('/game')->controller(\App\Http\Controllers\GameController::class)->middleware(\App\Http\Middleware\EnsureTokenValid::class)->group(function() {
-   Route::get('/index', 'index');
+   Route::get('/getGameData', 'getGameData');
+   Route::get('/getFrame', 'getFrame');
+   Route::get('/getFilm', 'getFilm');
 });
 
 Route::prefix('/admin')->controller(\App\Http\Controllers\AdminController::class)->middleware(\App\Http\Middleware\EnsureTokenValid::class)->group(function() {
     Route::post('/film', 'film');
 });
+
+//Route::prefix('/test')->controller()
+//
 
 
 

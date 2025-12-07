@@ -24,7 +24,7 @@ class StoreFilmRequest extends FormRequest
         return [
             'name' => ['string', 'unique:films,name', 'required'],
             'difficult_id' => ['string', 'required'],
-            'path_to_film' => ['file', 'required']
+            'path_to_film' => ['image', 'required', 'mimes:jpeg,png,jpg,gif|max:2048']
         ];
     }
 }
