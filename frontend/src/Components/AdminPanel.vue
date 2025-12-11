@@ -10,7 +10,7 @@ const newMovie = reactive({
   path_to_film: ''
 })
 
-const addMovie = () => {
+function addMovie() {
   const data = new FormData()
 
   data.append('name', newMovie.name)
@@ -22,10 +22,6 @@ const addMovie = () => {
       "Content-Type": 'multipart/form-data'
     }
   })
-      .then( function (response) {
-        console.log('фильм добавлен', response.data)
-      })
-      .catch(response => console.log(response))
   newMovie.name = ''
   newMovie.difficult_id = ''
   newMovie.path_to_film = ''
@@ -41,6 +37,7 @@ const cancelAddMovie = () => {
 const handleFileUpload = (event) => {
   newMovie.path_to_film = event.target.files[0]
 }
+
 </script>
 
 <template>
@@ -144,6 +141,7 @@ const handleFileUpload = (event) => {
 </template>
 
 <style scoped>
+
 .admin-container {
   min-height: 100vh;
   display: flex;

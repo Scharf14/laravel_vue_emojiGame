@@ -4,34 +4,39 @@ import {computed, onMounted, reactive, ref} from "vue";
 import apiClient from "@/utils/api.js";
 import router from "@/router.js";
 
-let avatar = ref('')
-let user = ref({})
-let stats = ref({
-  level: 1,
-  winstreak: 0,
-  experience: 0
-})
+let avatar = ref(null)
+let user = ref('')
+let stats = ref('')
+let defaultImage = '../../public/face.jpeg'
 
+function addAvatar() {
+  const data = new FormData()
+  data.append('path_to_avatar', avatar.value)
+  console.log('Файл для отправки:', avatar.value)
+  console.log('Имя файла:', avatar.value.name)
+  console.log('Размер:', avatar.value.size, 'байт')
 
-function getData() {
-  apiClient.get('http://localhost:8000/api/profile/show')
+  apiClient.post('/profile/avatar', data, {
+        headers: {
+          "Content-Type": 'multipart/form-data'
+        }
+      }
+  )
       .then(response => {
-        stats.value = response.data.stats
-        user.value = response.data.user
-      }).catch(response => {
-    console.log(response)
-  })
+        console.log('успех', response.data)
+      })
+      .catch(e => {
+        console.log(e)
+      })
 }
 
 function goBack() {
-  router.go(-1) // изменить на router-link
+  router.go(-1)
 }
 
-onMounted(() => {
-  getData()
-})
-
-
+function handleFileUpload(event) {
+  avatar.value = event.target.files[0]
+}
 </script>
 
 <template>
@@ -46,7 +51,11 @@ onMounted(() => {
         <button @click="goBack" class="close-btn">x</button>
 
         <div class="avatar-wrapper">
-          <img src="#" alt="Аватар" class="avatar-img"/>
+          <img :src="defaultImage" alt="Аватар" class="avatar-img"/>
+          <div>
+            <input type="file" required @change="handleFileUpload">
+            <button type="submit" class="image-button" @click="addAvatar">➡️</button>
+          </div>
         </div>
 
         <div class="user-info">
@@ -78,6 +87,54 @@ onMounted(() => {
 </template>
 
 <style scoped>
+
+
+.image-form {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.compact-upload {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.compact-upload:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.compact-upload input {
+  display: none;
+}
+
+.upload-icon {
+  font-size: 0.9rem;
+}
+
+.compact-submit {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: #ee9b01;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.compact-submit:hover {
+  background: #ffaa00;
+}
 
 .close-btn {
   width: 20px;

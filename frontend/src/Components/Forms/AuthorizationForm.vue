@@ -10,18 +10,19 @@ const authUser = reactive({
 
 const router = useRouter()
 
+
 function login() {
   apiClient.post('/auth/login', authUser)
-      .then(function (response) {
+      .then(response => {
         localStorage.setItem('stat', JSON.stringify(response.data.stat))
         localStorage.setItem('user', JSON.stringify(response.data.user))
         localStorage.setItem('token', JSON.stringify(response.data.token))
         router.push('/game')
-
       })
-      .catch(response => console.log(response))
+      .catch(e => {
+        console.log(e)
+      })
 }
-
 
 </script>
 

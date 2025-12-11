@@ -1,17 +1,15 @@
 <script setup>
-import {onMounted, reactive, ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import Level from '../Level.vue'
 import Winstreak from '../Winstreak.vue';
 import AnswerOptions from '../AnswerOptions.vue';
 import Layout from '../Layout.vue';
 import Emoji from '../Emoji.vue';
-import axios from "axios";
 import apiClient from "@/utils/api.js";
-import api from "@/utils/api.js";
 
 
 let answerOptions = ref()
-let films = ref() // Нужно понять, как мне отобразить правильный фильм среди кучи
+let films = ref()
 let stats = ref({
   level: 1,
   winstreak: 0,
@@ -19,47 +17,38 @@ let stats = ref({
 })
 let imageUrl = ref(null)
 let correctId = ref()
-function showData(id) {
-  console.log('your Frame:' + id)
-}
 
 function getGameData() {
-  apiClient.get('http://localhost:8000/api/game/getGameData')
+  apiClient.get('/game/getGameData')
       .then(response => {
         films.value = response.data.films.map(film => film.name)
-        return correctId.value = response.data.films.find(film => film.is_correct === true).id
-      }).catch(response => {
-    console.log(response)
-  }).then(corId => {
-    getFrame(corId)
-    showData(corId)
-  })
+        correctId.value = response.data.films.find(film => film.is_correct === true).id
+        getFrame(correctId.value)
+      })
+      .catch(e => {
+        console.log('Перехват в getGameData', e)
+      })
 }
 
-function getFrame(corId) {
-  console.log(corId)
-  console.log('getframe:')
-  apiClient.get('http://localhost:8000/api/game/getFrame', {
+function getFrame(correctId) {
+  apiClient.get('/game/getFrame', {
     responseType: 'blob',
     headers: {
       'Cache-Control': 'no-cache',
     },
     params: {
-      id: corId
+      id: correctId
     }
   })
       .then(response => {
         imageUrl.value = URL.createObjectURL(response.data)
-      }).catch(response => {
-    console.log(response)
-  })
+      })
+      .catch(e => {
+        console.log(e)
+      })
 }
 
-
-onMounted(() => {
-  getGameData()
-})
-
+getGameData()
 
 </script>
 

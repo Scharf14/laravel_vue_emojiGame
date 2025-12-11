@@ -10,14 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureTokenValid
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
-     */
+
     public function handle(Request $request, Closure $next): Response
     {
-
+        dd($request->header());
         $token = $request->header('Authorization');
         if ($token === null) {
             return response()->json([
@@ -25,8 +21,6 @@ class EnsureTokenValid
             ], 401);
         }
         $user = User::where('token', $token)->first();
-//        dd($user, $token);
-
           if ($user) {
             Auth::login($user);
             return $next($request);

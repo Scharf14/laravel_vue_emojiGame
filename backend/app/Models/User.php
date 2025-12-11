@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -18,9 +19,9 @@ class User extends Model implements Authenticatable
         return $this->hasOne(UserStat::class);
     }
 
-    public function avatar(): HasOne
+    public function avatar(): HasMany
     {
-        return $this->hasOne(Avatar::class);
+        return $this->hasMany(Avatar::class);
     }
 
     public function getAuthIdentifierName()

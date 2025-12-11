@@ -10,24 +10,34 @@ const props = defineProps({
   avatarPath: String
 })
 
-
+const defaultImage = '../../public/face.jpeg'
 const router = useRouter();
 
+
 function logout() {
+  console.log('1. Начало logout')
+  console.log('2. Токен в localStorage:', localStorage.getItem('token'))
+
   apiClient.post('/auth/logout')
-      .then(() => {
+      .then(response => {
+        console.log('3. Ответ от сервера:', response.status, response.data)
+
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         localStorage.removeItem('stat')
-        localStorage.removeItem('progress')
+
+        console.log('4. После удаления, токен:', localStorage.getItem('token'))
+
         router.push('/authorization')
       })
-      .catch(response => console.log(response))
+      .catch(error => {
+        console.error('5. Ошибка logout:', {
+          message: error.message,
+          status: error.response?.status,
+          data: error.response?.data
+        })
+      })
 }
-
-
-
-
 </script>
 
 <template>
@@ -52,12 +62,12 @@ function logout() {
               <router-link to="/game" class="router-link">Играть</router-link>
             </li>
             <li>
-              <div class="exp"> Серия побед: {{ props.winstreak }}</div>
+              <div class="exp"> Серия побед: {{ }}</div>
               <br>
-              <div class="lvl"> Уровень: {{ props.level }}</div>
+              <div class="lvl"> Уровень: {{ }}</div>
             </li>
             <li>
-              <router-link to="/userData"><img src="#"></router-link>
+              <router-link to="/userData"><img :src="defaultImage"></router-link>
             </li>
           </ul>
         </nav>
