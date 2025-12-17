@@ -11,7 +11,7 @@ const routes = [
     {path: '/game', component: GameView},
     {path: '/registration', component: RegistrationView},
     {path: '/authorization', component: AuthorizationView},
-    {path: '/userData', component: UserDataView},
+    {path: '/profile', component: UserDataView},
     {path: '/admin', component: AdminPanel},
 ]
 

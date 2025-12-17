@@ -1,9 +1,7 @@
 <script setup>
 import {useRouter} from 'vue-router';
 import {reactive} from "vue";
-import axios from 'axios';
 import apiClient from "@/utils/api.js";
-import {ref} from "vue";
 
 const newUser = reactive({
   name: '',
@@ -12,8 +10,6 @@ const newUser = reactive({
 })
 
 const router = useRouter()
-
-
 
 function register() {
   apiClient.post('/auth/register', newUser)
@@ -33,15 +29,15 @@ function register() {
 <template>
   <div class="register-container">
     <div class="register-card">
-      <h2 class="title">Регистрация</h2>
+      <h2 class="title">Registration</h2>
       <form class="register-form" @submit.prevent="register">
         <div class="input-group">
-          <label class="label">Имя</label>
+          <label class="label">Name</label>
           <input
               v-model="newUser.name"
               type="text"
               class="input"
-              placeholder="Введите ваше имя"
+              placeholder="Enter your name"
               required
           >
         </div>
@@ -52,24 +48,24 @@ function register() {
               v-model="newUser.email"
               type="email"
               class="input"
-              placeholder="Введите ваш email"
+              placeholder="Enter your email"
               required
           >
         </div>
 
         <div class="input-group">
-          <label class="label">Пароль</label>
+          <label class="label">Password</label>
           <input
               v-model="newUser.password"
               type="password"
               class="input"
-              placeholder="Введите пароль"
+              placeholder="Enter your password"
               required
           >
         </div>
 
         <button @click="register" type="button" class="register-button">
-          Зарегистрироваться
+          Register
         </button>
       </form>
     </div>

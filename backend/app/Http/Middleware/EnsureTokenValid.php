@@ -13,7 +13,6 @@ class EnsureTokenValid
 
     public function handle(Request $request, Closure $next): Response
     {
-        dd($request->header());
         $token = $request->header('Authorization');
         if ($token === null) {
             return response()->json([

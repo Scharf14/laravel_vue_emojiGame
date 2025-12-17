@@ -10,6 +10,8 @@ const newMovie = reactive({
   path_to_film: ''
 })
 
+
+
 function addMovie() {
   const data = new FormData()
 
@@ -43,7 +45,7 @@ const handleFileUpload = (event) => {
 <template>
   <div class="admin-container">
     <div class="admin-card">
-      <h2 class="title">Админ панель</h2>
+      <h2 class="title">Admin panel</h2>
 
       <div class="admin-content">
         <!-- Кнопка для открытия формы добавления фильма -->
@@ -52,40 +54,40 @@ const handleFileUpload = (event) => {
             class="admin-button primary"
             v-if="!showMovieForm"
         >
-          Добавить фильм
+          Add film
         </button>
 
         <!-- Форма добавления фильма -->
         <div v-if="showMovieForm" class="movie-form">
-          <h3 class="form-title">Добавить новый фильм</h3>
+          <h3 class="form-title">Add new film</h3>
 
           <form class="admin-form" @submit.prevent="addMovie">
             <div class="input-group">
-              <label class="label">Название фильма</label>
+              <label class="label">Name film</label>
               <input
                   v-model="newMovie.name"
                   type="text"
                   class="input"
-                  placeholder="Введите название фильма"
+                  placeholder="Enter the movie title"
                   required
               >
             </div>
 
             <div class="input-group">
-              <label class="label">Сложность</label>
+              <label class="label">Difficult</label>
               <select
                   v-model="newMovie.difficult_id"
                   class="input"
                   required
               >
-                <option value="">Выберите сложность</option>
+                <option value="">Take difficult</option>
                 <option value="1">easy</option>
                 <option value="2">medium</option>
                 <option value="3">hard</option>
               </select>
             </div>
             <div class="input-group">
-              <label class="label">Файл фильма</label>
+              <label class="label">File</label>
               <input
                   type="file"
                   @change="handleFileUpload"
@@ -95,14 +97,14 @@ const handleFileUpload = (event) => {
             </div>
             <div class="form-buttons">
               <button type="submit" class="admin-button primary">
-                Добавить фильм
+                Add film
               </button>
               <button
                   type="button"
                   @click="cancelAddMovie"
                   class="admin-button secondary"
               >
-                Отмена
+                Cancel
               </button>
             </div>
           </form>
@@ -214,6 +216,9 @@ const handleFileUpload = (event) => {
   font-size: 1rem;
   transition: all 0.3s ease;
   background-color: white;
+}
+.input::-webkit-file-upload-button {
+  display: none;
 }
 
 .input:focus {

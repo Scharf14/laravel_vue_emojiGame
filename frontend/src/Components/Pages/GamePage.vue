@@ -1,44 +1,46 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import {onMounted, reactive, ref, provide, computed} from 'vue'
 import Level from '../Level.vue'
-import Winstreak from '../Winstreak.vue';
+import WinningStreak from '../Winning_streak.vue';
 import AnswerOptions from '../AnswerOptions.vue';
 import Layout from '../Layout.vue';
 import Emoji from '../Emoji.vue';
 import apiClient from "@/utils/api.js";
 
-
-let answerOptions = ref()
 let films = ref()
-let stats = ref({
-  level: 1,
-  winstreak: 0,
-  experience: 0
-})
 let imageUrl = ref(null)
-let correctId = ref()
+let rightId = ref()
+let rightAnswer = ref(null)
+let stats = reactive({
+  level: null,
+  winningStreak: null,
+  experience: null
+})
+const grade = {1: 100, 2: 150, 3: 200, 4: 250, 5: 300, 6: 350}
+
 
 function getGameData() {
   apiClient.get('/game/getGameData')
       .then(response => {
         films.value = response.data.films.map(film => film.name)
-        correctId.value = response.data.films.find(film => film.is_correct === true).id
-        getFrame(correctId.value)
+
+        rightId.value = response.data.films.find(film => film.is_correct === true).id
+
+        rightAnswer.value = response.data.films.find(film => film.id === rightId.value).name
+
+        getFrame(rightId.value)
       })
       .catch(e => {
         console.log('Перехват в getGameData', e)
       })
 }
 
-function getFrame(correctId) {
-  apiClient.get('/game/getFrame', {
+function getFrame(rightId) {
+  apiClient.get('/game/getFrame/' + rightId, {
     responseType: 'blob',
     headers: {
       'Cache-Control': 'no-cache',
     },
-    params: {
-      id: correctId
-    }
   })
       .then(response => {
         imageUrl.value = URL.createObjectURL(response.data)
@@ -48,16 +50,82 @@ function getFrame(correctId) {
       })
 }
 
-getGameData()
+
+function saveData() {
+  saveLocalData()
+  apiClient.post('/game/saveStatistics', stats)
+      .then(response => {
+        stats.level = response.data.level
+        stats.experience = response.data.experience
+        stats.winningStreak = response.data.winningStreak
+      })
+      .catch(e => {
+        console.log('saveData:', e)
+      })
+}
+
+function saveLocalData() {
+  let statistics = JSON.parse(localStorage.getItem('stat'))
+  statistics.level = stats.level
+  statistics.winningStreak = stats.winningStreak
+  statistics.experience = stats.experience
+  localStorage.setItem('stat', JSON.stringify(statistics))
+}
+
+function getStatistics() {
+  apiClient.get('/game/getStatistics')
+      .then(response => {
+        stats.level = response.data.level
+        stats.experience = response.data.experience
+        stats.winningStreak = response.data.winningStreak
+      })
+      .catch(e => {
+        console.log('saveData:', e)
+      })
+}
+
+
+function answer(film) {
+  stats.level = (() => {
+    if (stats.experience < 1000) {
+      return 1
+    }
+    if (stats.experience >= 1000 && stats.experience <= 2000) {
+      return 2
+    }
+    if (stats.experience >= 2001 && stats.experience <= 3000) {
+      return 3
+    }
+    if (stats.experience >= 3001 && stats.experience <= 4000) {
+      return 4
+    }
+    if (stats.experience >= 4001 && stats.experience <= 5000) {
+      return 5
+    }
+    if (stats.experience >= 5001) {
+      return 6
+    }
+  })();
+
+  if (film === rightAnswer.value) {
+    stats.experience += grade[stats.level]
+  } else {
+    stats.experience -= grade[stats.level]
+  }
+  saveData()
+  getGameData()
+}
+
+onMounted(() => {
+  getStatistics()
+  getGameData()
+})
 
 </script>
 
 <template>
   <div class="container">
     <Layout
-        :level="stats.level"
-        :experience="stats.experience"
-        :winstreak="stats.winstreak"
     >
       <div class="stats-row">
         <Level
@@ -67,12 +135,12 @@ getGameData()
 
         </Level>
 
-        <Winstreak
+        <WinningStreak
             class="component-card experience"
             :experience="stats.experience"
         >
 
-        </Winstreak>
+        </WinningStreak>
       </div>
 
       <Emoji
@@ -83,11 +151,8 @@ getGameData()
       <AnswerOptions
           class="component-card answer-options"
           :films="films"
-          @correctAnswer=" answer => {
-
-          // addExp(answer)
-          // changeFilm(answer)
-          // nextLevel()
+          @film=" film => {
+            answer(film)
         }"
       >
       </AnswerOptions>

@@ -16,7 +16,7 @@ function login() {
       .then(response => {
         localStorage.setItem('stat', JSON.stringify(response.data.stat))
         localStorage.setItem('user', JSON.stringify(response.data.user))
-        localStorage.setItem('token', JSON.stringify(response.data.token))
+        localStorage.setItem('token', response.data.token)
         router.push('/game')
       })
       .catch(e => {
@@ -48,7 +48,7 @@ function login() {
       </div>
 
       <button @click="login" type="button" class="login-button">
-        Войти
+        Login
       </button>
     </div>
   </div>

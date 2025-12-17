@@ -1,85 +1,98 @@
 <script setup>
 import Layout from "@/Components/Layout.vue";
-import {computed, onMounted, reactive, ref} from "vue";
+import {computed, onMounted, inject, ref} from "vue";
 import apiClient from "@/utils/api.js";
-import router from "@/router.js";
 
-let avatar = ref(null)
-let user = ref('')
-let stats = ref('')
-let defaultImage = '../../public/face.jpeg'
+const user = ref({
+  name: '',
+  email: '',
+})
 
-function addAvatar() {
+const stats = JSON.parse(localStorage.getItem('stat'))
+const userLocal = JSON.parse(localStorage.getItem('user'))
+const filePath = ref(null)
+const avatar = ref(null)
+
+if (!avatar.value) {
+  avatar.value = '../../public/face.jpeg'
+}
+
+function setAvatar() {
   const data = new FormData()
   data.append('path_to_avatar', avatar.value)
   console.log('Файл для отправки:', avatar.value)
   console.log('Имя файла:', avatar.value.name)
   console.log('Размер:', avatar.value.size, 'байт')
 
-  apiClient.post('/profile/avatar', data, {
+  apiClient.post('/profile/setAvatar', data, {
         headers: {
           "Content-Type": 'multipart/form-data'
         }
       }
   )
       .then(response => {
-        console.log('успех', response.data)
+        console.log('Ответ setAvatar')
+        getAvatar()
       })
       .catch(e => {
         console.log(e)
       })
 }
 
-function goBack() {
-  router.go(-1)
+function getAvatar() {
+  apiClient.get('/profile/getAvatar', {
+    responseType: 'blob',
+    headers: {
+      'Cache-control': 'no-cache'
+    }
+  })
+      .then(response => {
+        avatar.value = URL.createObjectURL(response.data)
+      })
+      .catch(e => {
+        console.log('loadAvatar', e)
+      })
 }
+
+onMounted(() => {
+  getAvatar()
+})
 
 function handleFileUpload(event) {
   avatar.value = event.target.files[0]
 }
+
+
 </script>
 
 <template>
   <Layout
-      :level="stats.level"
-      :experience="stats.experience"
-      :winstreak="stats.winstreak"
-      :avatarPath="avatar"
+      :avatar="avatar"
   >
-    <div class="user-profile-modal">
-      <div class="user-card">
-        <button @click="goBack" class="close-btn">x</button>
-
-        <div class="avatar-wrapper">
-          <img :src="defaultImage" alt="Аватар" class="avatar-img"/>
-          <div>
-            <input type="file" required @change="handleFileUpload">
-            <button type="submit" class="image-button" @click="addAvatar">➡️</button>
+    <div class="container-profile">
+      <div class="title">
+        <span>Player profile</span>
+      </div>
+      <div class="profile-content">
+        <div class="avatar-section">
+          <div class="avatar">
+            <img :src="avatar" alt="">
           </div>
         </div>
-
-        <div class="user-info">
-          <h3 class="user-name">{{ user.name }}</h3>
-          <p class="user-email">{{ user.email }}</p>
-
-          <div class="level-exp">
-            <div class="level-row">
-              <span class="level-label">Уровень</span>
-              <span class="level-value">{{ stats.level }}</span>
-            </div>
-
-            <div class="exp-bar-container">
-              <div class="exp-bar">
-                <div
-                    class="exp-fill"
-                    :style="{}">
-
-                </div>
-              </div>
-              <span class="exp-text">{{ stats.experience }} EXP</span>
-            </div>
+        <div class="profile-section">
+          <div class="data-name">Name: {{ }}</div>
+          <div class="data-email">Mail: {{ l }}</div>
+          <div class="send-data-avatar">
+            <input type="file" id="avatar-input" @change="handleFileUpload">
+            <label for="avatar-input" class="custom-file-btn">Take image</label>
+            <button type="submit" class="submit-btn" @click="setAvatar">Send</button>
           </div>
         </div>
+      </div>
+      <div class="game-data">
+        <div class="game-item">Experience: {{ stats.experience }}</div>
+        <div class="game-item">Level: {{ stats.level }}</div>
+        <div class="game-item">Winning streak: {{ stats.level }}</div>
       </div>
     </div>
   </Layout>
@@ -87,187 +100,139 @@ function handleFileUpload(event) {
 </template>
 
 <style scoped>
-
-
-.image-form {
-  display: flex;
-  gap: 4px;
-  margin-top: 6px;
-}
-
-.compact-upload {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.compact-upload:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.compact-upload input {
-  display: none;
-}
-
-.upload-icon {
-  font-size: 0.9rem;
-}
-
-.compact-submit {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  border: none;
-  background: #ee9b01;
-  color: white;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.compact-submit:hover {
-  background: #ffaa00;
-}
-
-.close-btn {
-  width: 20px;
-  height: 20px;
-  border-radius: 5px;
-}
-
-.close-icon {
-  color: black;
-  text-decoration: none;
-}
-
-.user-profile-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.user-card {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+.container-profile {
+  background: white;
+  border-radius: 12px;
   padding: 24px;
-  background: linear-gradient(135deg, #68904d 0%, #5f9ea0 100%);
-  border-radius: 24px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
   max-width: 420px;
-  width: 100%;
-  color: white;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  border: 3px solid rgba(255, 255, 255, 0.15);
+  min-width: 380px;
+  margin: 20px auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #eaeaea;
+  transition: padding 0.2s ease;
 }
 
-.avatar-wrapper {
+.title {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.title span {
+  font-size: 22px;
+  font-weight: 600;
+  color: #2d2d2d;
+  letter-spacing: 0.5px;
+}
+
+.profile-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.avatar-section {
   flex-shrink: 0;
 }
 
-.avatar-img {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #ee9b01;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.user-info {
-  flex: 1;
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid #f0f0f0;
 }
 
-.user-name {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.user-email {
-  margin: 0;
-  font-size: 1rem;
-  opacity: 0.9;
-  color: #f0f8ff;
-}
-
-.level-exp {
-  margin-top: 8px;
+.profile-section {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex-grow: 1;
 }
 
-.level-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.data-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
 }
 
-.level-label {
-  font-size: 0.95rem;
-  opacity: 0.9;
+.data-email {
+  font-size: 14px;
+  color: #666;
+  background: #f9f9f9;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border-left: 3px solid #d0d0d0;
 }
 
-.level-value {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #ee9b01;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+.game-data {
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
 }
 
-.exp-bar-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
-}
-
-.exp-bar {
-  flex: 1;
-  height: 10px;
-  background-color: rgba(255, 255, 255, 0.25);
-  border-radius: 5px;
-  overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.exp-fill {
-  height: 100%;
-  background-color: #ee9b01;
-  border-radius: 5px;
-  transition: width 0.5s ease;
-  box-shadow: 0 0 8px rgba(238, 155, 1, 0.4);
-}
-
-.exp-text {
-  min-width: 70px;
-  text-align: right;
+.game-data * {
+  font-size: 16px;
   font-weight: 500;
-  color: #ee9b01;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  color: #333;
+  padding: 10px;
+  text-align: center;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: transparent;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.send-data-avatar {
+  display: inline-block;
+}
 
+.send-data-avatar input[type="file"] {
+  display: none; /* Прячем стандартный input */
+}
+
+.custom-file-btn {
+  display: inline-block;
+  background-color: #68904d; /* Зеленый */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.custom-file-btn:hover {
+  background-color: #446b28; /* Темнее зеленый */
+}
+
+.submit-btn {
+  display: inline-block;
+  background-color: #fff; /* Зеленый */
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-left: 25px;
+}
 </style>

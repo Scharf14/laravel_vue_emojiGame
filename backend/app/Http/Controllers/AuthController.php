@@ -24,7 +24,7 @@ class AuthController extends Controller
         $user->token = $token;
 
 
-        $userStat = $user->userStat()->create(['level' => 1, 'experience' => 0, 'winstreak' => 0]);
+        $userStat = $user->userStat()->create(['level' => 1, 'experience' => 0, 'winning_streak' => 0]);
 
         $user->save();
 
@@ -52,7 +52,6 @@ class AuthController extends Controller
         $user->token = $token;
 
         $userStat = $user->userStat;
-
         $user->save();
         return response()->json([
             'stat' => $userStat,

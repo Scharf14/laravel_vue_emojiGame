@@ -1,18 +1,41 @@
 <script setup>
 import apiClient from "@/utils/api.js";
 import {useRouter} from 'vue-router';
-import {ref, onMounted, computed} from "vue";
+import {computed, onMounted, ref} from "vue";
 
 const props = defineProps({
-  level: Number,
-  experience: Number,
-  winstreak: Number,
-  avatarPath: String
+  avatar: String
 })
 
-const defaultImage = '../../public/face.jpeg'
 const router = useRouter();
+const avatar = ref(null);
 
+let stats = computed(() => {
+  const dataStats = localStorage.getItem('stat')
+  if (!dataStats) {
+    const stat = { // Потом можно будет сделать запрос данных на пользователя Аноним
+      level: 1,
+      winningStreak: 0,
+      experience: 0
+    }
+    localStorage.setItem('stat', JSON.stringify(stat))
+    return stat
+  }
+  return JSON.parse(dataStats)
+})
+
+// let userData = computed(() => { // Не понимаю почему, но функция не работает, поэтому у пользователей без регистрации не отображается имя и mail в userDataPage
+//   const dataUser = localStorage.getItem('user')
+//   if (!dataUser) {
+//     const user = {
+//       name: 'anonymous',
+//       email: 'anonymous@mail.ru'
+//     }
+//     localStorage.setItem('user', JSON.stringify(user))
+//     return user
+//   }
+//   return JSON.parse(dataUser)
+// })
 
 function logout() {
   console.log('1. Начало logout')
@@ -38,6 +61,26 @@ function logout() {
         })
       })
 }
+
+function getAvatar() {
+  apiClient.get('/profile/getAvatar', {
+    responseType: 'blob',
+    headers: {
+      'Cache-control': 'no-cache'
+    }
+  })
+      .then(response => {
+        avatar.value = URL.createObjectURL(response.data)
+      })
+      .catch(e => {
+        console.log('loadAvatar', e)
+      })
+}
+
+
+onMounted(() => {
+  getAvatar()
+})
 </script>
 
 <template>
@@ -47,27 +90,27 @@ function logout() {
         <nav>
           <ul>
             <li>
-              <router-link to="/admin" class="router-link">Админ</router-link>
+              <router-link to="/admin" class="router-link">Admin panel</router-link>
             </li>
             <li>
-              <router-link to="/registration" class="router-link">Зарегистрироваться</router-link>
+              <router-link to="/registration" class="router-link">Registration</router-link>
             </li>
             <li>
-              <router-link to="/authorization" class="router-link">Войти</router-link>
+              <router-link to="/authorization" class="router-link">login</router-link>
             </li>
             <li @click="logout">
-              <router-link to="/authorization" class="router-link">Выйти</router-link>
+              <router-link to="/authorization" class="router-link">logout</router-link>
             </li>
             <li>
-              <router-link to="/game" class="router-link">Играть</router-link>
+              <router-link to="/game" class="router-link">Play</router-link>
             </li>
             <li>
-              <div class="exp"> Серия побед: {{ }}</div>
+              <div class="exp"> Winning streak: {{ stats.winningStreak }}</div>
               <br>
-              <div class="lvl"> Уровень: {{ }}</div>
+              <div class="lvl"> Level: {{ stats.level }}</div>
             </li>
             <li>
-              <router-link to="/userData"><img :src="defaultImage"></router-link>
+              <router-link to="/profile"><img :src="avatar"></router-link>
             </li>
           </ul>
         </nav>
@@ -107,11 +150,9 @@ li {
 }
 
 img {
-  width: 50px;
-  height: 70px;
-  background: #fff;
-  border: 4px solid #8ea6b7;
-  border-radius: 10px;
+  width: 80px;
+  height: 90px; /* фиксированная высота */
+  object-fit: cover;
 }
 
 .exp {

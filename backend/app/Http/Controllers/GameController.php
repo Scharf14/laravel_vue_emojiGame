@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditStatsRequest;
 use App\Http\Requests\StoreFilmRequest;
 use App\Models\UserStat;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Film;
 use Illuminate\Support\Facades\Storage;
 use Nette\Utils\Random;
+use App\Models\User;
 
 class GameController extends Controller
 {
@@ -17,7 +19,7 @@ class GameController extends Controller
      */
     public function getGameData()
     {
-        $films = Film::inRandomOrder()->limit(4)->get();
+        $films = Film::inRandomOrder()->limit(5)->get();
         $correctFilm = $films->random();
         $correctFilmId = $correctFilm->id;
 
@@ -30,13 +32,9 @@ class GameController extends Controller
         ]);
     }
 
-    public function getFrame(Request $request)
+    public function getFrame(Film $film)
     {
-        $goodId = $request->get('id');
-
-        $goodFilm = Film::find($goodId);
-
-        $goodFilmFrame = Storage::disk('public')->path($goodFilm->path_to_film);
+        $goodFilmFrame = Storage::disk('public')->path($film->path_to_film);
         return response()->file($goodFilmFrame);
     }
 
@@ -56,17 +54,47 @@ class GameController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function saveStatistics(Request $request)
     {
+        $userId = Auth::user()->id;
 
+        $experience = $request->experience;
+        $winningStreak = $request->winningStreak;
+        $level = $request->level;
+
+        if($experience !== null) {
+            UserStat::where('user_id', $userId)->update(['experience' => $experience]);
+        }
+        if($winningStreak !== null) {
+            UserStat::where('user_id', $userId)->update(['winning_streak' => $winningStreak]);
+        }
+        if($level !== null) {
+            UserStat::where('user_id', $userId)->update(['level' => $level]);
+        }
+
+        return response()->json([
+            'experience' => $experience,
+            'winningStreak' => $winningStreak,
+            'level' => $level,
+            'message' => 'ответ пришел'
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function getStatistics(Request $request)
     {
-        //
+        $userId = Auth::user()->id;
+
+        $userStats = UserStat::where('user_id', $userId)->first();
+
+        $stats = [
+            'level' => $userStats->level,
+            'winningStreak' => $userStats->winning_streak,
+            'experience' => $userStats->experience,
+        ];
+        return response()->json($stats);
     }
 
     /**

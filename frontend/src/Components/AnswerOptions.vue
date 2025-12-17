@@ -8,11 +8,11 @@ const props = defineProps({
   films: Array
 })
 
-// const emit = defineEmits(['correctAnswer'])
-//
-// function sendAnswer(answer) {
-//   emit('correctAnswer', answer)
-// }
+const emit = defineEmits(['film'])
+
+function answer(film) {
+  emit('film', film)
+}
 
 
 </script>
@@ -20,11 +20,11 @@ const props = defineProps({
 <template>
   <div class="options-container">
     <div class="main-bar">
-      <h2>Варианты ответа</h2>
+      <h2>Answer options</h2>
       <div class="answers">
         <button
             v-for="film in films"
-            @click="sendAnswer(answer)"
+            @click="answer(film)"
         >
           {{ film }}
         </button>

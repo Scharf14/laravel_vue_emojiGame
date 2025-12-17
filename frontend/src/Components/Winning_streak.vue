@@ -1,15 +1,19 @@
 <script setup>
-import {ref} from 'vue'
+import {computed, ref} from 'vue'
 
 const props = defineProps({
   experience: Number
+})
+
+const stats = computed(() => {
+  return props.experience
 })
 </script>
 
 <template>
   <div class="win-container">
     <div>
-      <p>Опыт: {{ props.experience }}</p>
+      <p>Experience: {{ stats }}</p>
     </div>
   </div>
 </template>
