@@ -1,41 +1,29 @@
 <script setup>
 import apiClient from "@/utils/api.js";
 import {useRouter} from 'vue-router';
-import {computed, onMounted, ref} from "vue";
-
-const props = defineProps({
-  avatar: String
-})
+import {onMounted, reactive, ref} from "vue";
 
 const router = useRouter();
 const avatar = ref(null);
 
-let stats = computed(() => {
-  const dataStats = localStorage.getItem('stat')
-  if (!dataStats) {
-    const stat = { // Потом можно будет сделать запрос данных на пользователя Аноним
-      level: 1,
-      winningStreak: 0,
-      experience: 0
-    }
-    localStorage.setItem('stat', JSON.stringify(stat))
-    return stat
-  }
-  return JSON.parse(dataStats)
+const props = defineProps({
+  level: Number,
+  winningStreak: Number
 })
 
-// let userData = computed(() => { // Не понимаю почему, но функция не работает, поэтому у пользователей без регистрации не отображается имя и mail в userDataPage
-//   const dataUser = localStorage.getItem('user')
-//   if (!dataUser) {
-//     const user = {
-//       name: 'anonymous',
-//       email: 'anonymous@mail.ru'
-//     }
-//     localStorage.setItem('user', JSON.stringify(user))
-//     return user
-//   }
-//   return JSON.parse(dataUser)
-// })
+const level = ref()
+const winningStreak = ref()
+
+// const stat = JSON.parse(localStorage.getItem('stat'))
+
+function options() {
+  if (props.level && props.winningStreak) {
+    return true
+  } else {
+    return false
+  }
+}
+
 
 function logout() {
   console.log('1. Начало logout')
@@ -77,8 +65,16 @@ function getAvatar() {
       })
 }
 
+const handleStorageChange = (event) => {
+  if (event.key === 'stat') {
+    level.value = JSON.parse(event.newValue).level || ''
+    winningStreak.value = JSON.parse(event.newValue).winningStreak || ''
+    console.log(winningStreak.value)
+  }
+}
 
 onMounted(() => {
+  window.addEventListener('storage', handleStorageChange)
   getAvatar()
 })
 </script>
@@ -105,9 +101,10 @@ onMounted(() => {
               <router-link to="/game" class="router-link">Play</router-link>
             </li>
             <li>
-              <div class="exp"> Winning streak: {{ stats.winningStreak }}</div>
+              <div class="exp"> Winning streak: {{ winningStreak }}</div>
               <br>
-              <div class="lvl"> Level: {{ stats.level }}</div>
+              <div class="exp"> Level: {{ level }}</div>
+
             </li>
             <li>
               <router-link to="/profile"><img :src="avatar"></router-link>

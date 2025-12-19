@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, reactive, ref, provide, computed} from 'vue'
+import {computed, onMounted, reactive, ref} from 'vue'
 import Level from '../Level.vue'
 import WinningStreak from '../Winning_streak.vue';
 import AnswerOptions from '../AnswerOptions.vue';
@@ -16,8 +16,16 @@ let stats = reactive({
   winningStreak: null,
   experience: null
 })
-const grade = {1: 100, 2: 150, 3: 200, 4: 250, 5: 300, 6: 350}
+const streakTiers = [
+  {streak: 0, bonus: 0},
+  {streak: 3, bonus: 150},
+  {streak: 6, bonus: 300},
+  {streak: 9, bonus: 450}
+]
 
+const computedLevel = computed(() => {
+  return Math.floor(stats.experience / 1000)
+})
 
 function getGameData() {
   apiClient.get('/game/getGameData')
@@ -55,7 +63,7 @@ function saveData() {
   saveLocalData()
   apiClient.post('/game/saveStatistics', stats)
       .then(response => {
-        stats.level = response.data.level
+        // stats.level = response.data.level
         stats.experience = response.data.experience
         stats.winningStreak = response.data.winningStreak
       })
@@ -65,17 +73,13 @@ function saveData() {
 }
 
 function saveLocalData() {
-  let statistics = JSON.parse(localStorage.getItem('stat'))
-  statistics.level = stats.level
-  statistics.winningStreak = stats.winningStreak
-  statistics.experience = stats.experience
-  localStorage.setItem('stat', JSON.stringify(statistics))
+  localStorage.setItem('stat', JSON.stringify(stats))
 }
 
 function getStatistics() {
   apiClient.get('/game/getStatistics')
       .then(response => {
-        stats.level = response.data.level
+        // stats.level = response.data.level
         stats.experience = response.data.experience
         stats.winningStreak = response.data.winningStreak
       })
@@ -84,53 +88,59 @@ function getStatistics() {
       })
 }
 
+function getStreakBonus() {
+  const arr = streakTiers.length
+  for (let i = arr - 1; i >= 0; i--) {
+    if (stats.winningStreak >= streakTiers[i].streak) {
+      return streakTiers[i].bonus
+    }
+  }
+  return 0
+}
 
 function answer(film) {
-  stats.level = (() => {
-    if (stats.experience < 1000) {
-      return 1
-    }
-    if (stats.experience >= 1000 && stats.experience <= 2000) {
-      return 2
-    }
-    if (stats.experience >= 2001 && stats.experience <= 3000) {
-      return 3
-    }
-    if (stats.experience >= 3001 && stats.experience <= 4000) {
-      return 4
-    }
-    if (stats.experience >= 4001 && stats.experience <= 5000) {
-      return 5
-    }
-    if (stats.experience >= 5001) {
-      return 6
-    }
-  })();
-
-  if (film === rightAnswer.value) {
-    stats.experience += grade[stats.level]
+  const flag = film === rightAnswer.value
+  const bonus = getStreakBonus()
+  if (flag) {
+    stats.winningStreak++
+    stats.experience += 100 + bonus
   } else {
-    stats.experience -= grade[stats.level]
+    stats.winningStreak = 0
+    stats.experience -= 200
   }
+
+  saveLocalData()
   saveData()
   getGameData()
 }
 
+const handleStorageChange = (event) => {
+  if (event.key === 'stat') {
+    console.log('asdf')
+
+  }
+}
+
 onMounted(() => {
+  window.addEventListener('storage', handleStorageChange)
+
   getStatistics()
   getGameData()
 })
+
 
 </script>
 
 <template>
   <div class="container">
     <Layout
+        :level="computedLevel"
+        :winningStreak="stats.winningStreak"
     >
       <div class="stats-row">
         <Level
             class="component-card level"
-            :level="stats.level"
+            :level="computedLevel"
         >
 
         </Level>

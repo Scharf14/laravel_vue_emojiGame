@@ -10,12 +10,9 @@ const user = ref({
 
 const stats = JSON.parse(localStorage.getItem('stat'))
 const userLocal = JSON.parse(localStorage.getItem('user'))
+
 const filePath = ref(null)
 const avatar = ref(null)
-
-if (!avatar.value) {
-  avatar.value = '../../public/face.jpeg'
-}
 
 function setAvatar() {
   const data = new FormData()
@@ -57,6 +54,8 @@ function getAvatar() {
 onMounted(() => {
   getAvatar()
 })
+
+
 
 function handleFileUpload(event) {
   avatar.value = event.target.files[0]

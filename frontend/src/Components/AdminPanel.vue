@@ -11,7 +11,6 @@ const newMovie = reactive({
 })
 
 
-
 function addMovie() {
   const data = new FormData()
 
@@ -39,6 +38,7 @@ const cancelAddMovie = () => {
 const handleFileUpload = (event) => {
   newMovie.path_to_film = event.target.files[0]
 }
+
 
 </script>
 
@@ -110,33 +110,7 @@ const handleFileUpload = (event) => {
           </form>
         </div>
 
-        <!-- Контейнер для будущих кнопок -->
-        <div class="buttons-container" v-if="!showMovieForm">
-          <!-- Будущие кнопки можно будет добавлять сюда -->
-          <!--
-          <button class="admin-button secondary">
-            Управление фильмами
-          </button>
-          <button class="admin-button secondary">
-            Статистика
-          </button>
-          <button class="admin-button danger">
-            Настройки
-          </button>
-          -->
-        </div>
 
-        <!-- Дополнительный контейнер для группировки будущих кнопок -->
-        <div class="action-groups" v-if="!showMovieForm">
-          <!-- Будущие группы действий -->
-          <!--
-          <div class="action-group">
-            <h3 class="group-title">Управление контентом</h3>
-            <button class="admin-button secondary">Все фильмы</button>
-            <button class="admin-button secondary">Категории</button>
-          </div>
-          -->
-        </div>
       </div>
     </div>
   </div>
@@ -217,6 +191,7 @@ const handleFileUpload = (event) => {
   transition: all 0.3s ease;
   background-color: white;
 }
+
 .input::-webkit-file-upload-button {
   display: none;
 }

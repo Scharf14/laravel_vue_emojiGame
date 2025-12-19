@@ -10,7 +10,7 @@ const props = defineProps({
 <template>
   <div class="levelContainer">
     <div>
-      <p>Level: {{ level }}</p>
+      <p> Level: {{props.level}}</p>
     </div>
   </div>
 </template>
