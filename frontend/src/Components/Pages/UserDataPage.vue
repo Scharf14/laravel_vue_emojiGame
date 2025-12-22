@@ -1,26 +1,26 @@
 <script setup>
 import Layout from "@/Components/Layout.vue";
-import {computed, onMounted, inject, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import apiClient from "@/utils/api.js";
+import {useGameStatStore} from "../../../stores/GameStatistics.js";
+import {useAvatarStore} from "../../../stores/AvatarProfile.js";
+
+const avatarStore = useAvatarStore()
+const statStore = useGameStatStore()
 
 const user = ref({
   name: '',
   email: '',
 })
 
-const stats = JSON.parse(localStorage.getItem('stat'))
-const userLocal = JSON.parse(localStorage.getItem('user'))
-
-const filePath = ref(null)
-const avatar = ref(null)
+const profile = JSON.parse(localStorage.getItem('user'))
+const computedLevel = computed(() => {
+  return Math.floor(statStore.stats.experience / 1000)
+})
 
 function setAvatar() {
   const data = new FormData()
-  data.append('path_to_avatar', avatar.value)
-  console.log('Файл для отправки:', avatar.value)
-  console.log('Имя файла:', avatar.value.name)
-  console.log('Размер:', avatar.value.size, 'байт')
-
+  data.append('path_to_avatar', avatarStore.avatar)
   apiClient.post('/profile/setAvatar', data, {
         headers: {
           "Content-Type": 'multipart/form-data'
@@ -28,46 +28,26 @@ function setAvatar() {
       }
   )
       .then(response => {
-        console.log('Ответ setAvatar')
-        getAvatar()
+        avatarStore.getAvatar()
       })
       .catch(e => {
         console.log(e)
       })
 }
 
-function getAvatar() {
-  apiClient.get('/profile/getAvatar', {
-    responseType: 'blob',
-    headers: {
-      'Cache-control': 'no-cache'
-    }
-  })
-      .then(response => {
-        avatar.value = URL.createObjectURL(response.data)
-      })
-      .catch(e => {
-        console.log('loadAvatar', e)
-      })
-}
-
 onMounted(() => {
-  getAvatar()
+  avatarStore.getAvatar()
 })
 
-
-
 function handleFileUpload(event) {
-  avatar.value = event.target.files[0]
+  avatarStore.avatar = event.target.files[0]
 }
 
 
 </script>
 
 <template>
-  <Layout
-      :avatar="avatar"
-  >
+  <Layout>
     <div class="container-profile">
       <div class="title">
         <span>Player profile</span>
@@ -75,12 +55,12 @@ function handleFileUpload(event) {
       <div class="profile-content">
         <div class="avatar-section">
           <div class="avatar">
-            <img :src="avatar" alt="">
+            <img :src="avatarStore.avatar" alt="">
           </div>
         </div>
         <div class="profile-section">
-          <div class="data-name">Name: {{ }}</div>
-          <div class="data-email">Mail: {{ l }}</div>
+          <div class="data-name">Name: {{ profile.name }}</div>
+          <div class="data-email">Mail: {{ profile.email }}</div>
           <div class="send-data-avatar">
             <input type="file" id="avatar-input" @change="handleFileUpload">
             <label for="avatar-input" class="custom-file-btn">Take image</label>
@@ -89,9 +69,9 @@ function handleFileUpload(event) {
         </div>
       </div>
       <div class="game-data">
-        <div class="game-item">Experience: {{ stats.experience }}</div>
-        <div class="game-item">Level: {{ stats.level }}</div>
-        <div class="game-item">Winning streak: {{ stats.level }}</div>
+        <div class="game-item">Experience: {{ statStore.stats.experience }}</div>
+        <div class="game-item">Level: {{ computedLevel }}</div>
+        <div class="game-item">Winning streak: {{ statStore.stats.winningStreak }}</div>
       </div>
     </div>
   </Layout>

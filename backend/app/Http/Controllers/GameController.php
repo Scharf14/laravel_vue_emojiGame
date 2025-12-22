@@ -19,7 +19,7 @@ class GameController extends Controller
      */
     public function getGameData()
     {
-        $films = Film::inRandomOrder()->limit(2)->get();
+        $films = Film::inRandomOrder()->limit(5)->get();
         $correctFilm = $films->random();
         $correctFilmId = $correctFilm->id;
 

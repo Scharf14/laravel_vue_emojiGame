@@ -6,16 +6,24 @@ import AnswerOptions from '../AnswerOptions.vue';
 import Layout from '../Layout.vue';
 import Emoji from '../Emoji.vue';
 import apiClient from "@/utils/api.js";
+import {useGameStatStore} from "../../../stores/GameStatistics.js";
 
-let films = ref()
-let imageUrl = ref(null)
-let rightId = ref()
-let rightAnswer = ref(null)
-let stats = reactive({
-  level: null,
+const films = ref()
+const imageUrl = ref(null)
+const rightId = ref()
+const rightAnswer = ref(null)
+const storage = useGameStatStore()
+
+const computedLevel = computed(() => {
+  return Math.floor(stats.experience / 1000)
+})
+
+const stats = reactive({
+  level: computedLevel,
   winningStreak: null,
   experience: null
 })
+
 const streakTiers = [
   {streak: 0, bonus: 0},
   {streak: 3, bonus: 150},
@@ -23,12 +31,8 @@ const streakTiers = [
   {streak: 9, bonus: 450}
 ]
 
-const computedLevel = computed(() => {
-  return Math.floor(stats.experience / 1000)
-})
-
 function getGameData() {
-  apiClient.get('/game/getGameData')
+  apiClient.get('/game/data')
       .then(response => {
         films.value = response.data.films.map(film => film.name)
 
@@ -44,7 +48,7 @@ function getGameData() {
 }
 
 function getFrame(rightId) {
-  apiClient.get('/game/getFrame/' + rightId, {
+  apiClient.get('/game/frame/' + rightId, {
     responseType: 'blob',
     headers: {
       'Cache-Control': 'no-cache',
@@ -60,10 +64,8 @@ function getFrame(rightId) {
 
 
 function saveData() {
-  saveLocalData()
   apiClient.post('/game/saveStatistics', stats)
       .then(response => {
-        // stats.level = response.data.level
         stats.experience = response.data.experience
         stats.winningStreak = response.data.winningStreak
       })
@@ -72,14 +74,11 @@ function saveData() {
       })
 }
 
-function saveLocalData() {
-  localStorage.setItem('stat', JSON.stringify(stats))
-}
+
 
 function getStatistics() {
-  apiClient.get('/game/getStatistics')
+  apiClient.get('/game/statistics')
       .then(response => {
-        // stats.level = response.data.level
         stats.experience = response.data.experience
         stats.winningStreak = response.data.winningStreak
       })
@@ -104,26 +103,19 @@ function answer(film) {
   if (flag) {
     stats.winningStreak++
     stats.experience += 100 + bonus
+
   } else {
     stats.winningStreak = 0
     stats.experience -= 200
   }
 
-  saveLocalData()
+
+  storage.stats = stats
   saveData()
   getGameData()
 }
 
-const handleStorageChange = (event) => {
-  if (event.key === 'stat') {
-    console.log('asdf')
-
-  }
-}
-
 onMounted(() => {
-  window.addEventListener('storage', handleStorageChange)
-
   getStatistics()
   getGameData()
 })
@@ -134,8 +126,7 @@ onMounted(() => {
 <template>
   <div class="container">
     <Layout
-        :level="computedLevel"
-        :winningStreak="stats.winningStreak"
+
     >
       <div class="stats-row">
         <Level

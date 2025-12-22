@@ -10,7 +10,6 @@ const newMovie = reactive({
   path_to_film: ''
 })
 
-
 function addMovie() {
   const data = new FormData()
 
@@ -34,11 +33,6 @@ const cancelAddMovie = () => {
   newMovie.name = ''
   newMovie.difficulty = ''
 }
-
-const handleFileUpload = (event) => {
-  newMovie.path_to_film = event.target.files[0]
-}
-
 
 </script>
 

@@ -1,29 +1,17 @@
 <script setup>
 import apiClient from "@/utils/api.js";
 import {useRouter} from 'vue-router';
-import {onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
+import {useGameStatStore} from "../../stores/GameStatistics.js";
+import {useAvatarStore} from "../../stores/AvatarProfile.js";
 
 const router = useRouter();
-const avatar = ref(null);
+const avatarStore = useAvatarStore()
+const statStore = useGameStatStore()
 
-const props = defineProps({
-  level: Number,
-  winningStreak: Number
+const computedLevel = computed(() => {
+  return Math.floor(statStore.stats.experience / 1000)
 })
-
-const level = ref()
-const winningStreak = ref()
-
-// const stat = JSON.parse(localStorage.getItem('stat'))
-
-function options() {
-  if (props.level && props.winningStreak) {
-    return true
-  } else {
-    return false
-  }
-}
-
 
 function logout() {
   console.log('1. Начало logout')
@@ -50,32 +38,9 @@ function logout() {
       })
 }
 
-function getAvatar() {
-  apiClient.get('/profile/getAvatar', {
-    responseType: 'blob',
-    headers: {
-      'Cache-control': 'no-cache'
-    }
-  })
-      .then(response => {
-        avatar.value = URL.createObjectURL(response.data)
-      })
-      .catch(e => {
-        console.log('loadAvatar', e)
-      })
-}
-
-const handleStorageChange = (event) => {
-  if (event.key === 'stat') {
-    level.value = JSON.parse(event.newValue).level || ''
-    winningStreak.value = JSON.parse(event.newValue).winningStreak || ''
-    console.log(winningStreak.value)
-  }
-}
-
 onMounted(() => {
-  window.addEventListener('storage', handleStorageChange)
-  getAvatar()
+  statStore.getStats()
+  avatarStore.getAvatar() 
 })
 </script>
 
@@ -101,13 +66,12 @@ onMounted(() => {
               <router-link to="/game" class="router-link">Play</router-link>
             </li>
             <li>
-              <div class="exp"> Winning streak: {{ winningStreak }}</div>
+              <div class="exp"> Winning streak: {{ statStore.stats.winningStreak }}</div>
               <br>
-              <div class="exp"> Level: {{ level }}</div>
-
+              <div class="exp"> Level: {{ computedLevel }}</div>
             </li>
             <li>
-              <router-link to="/profile"><img :src="avatar"></router-link>
+              <router-link to="/profile"><img :src="avatarStore.avatar"></router-link>
             </li>
           </ul>
         </nav>

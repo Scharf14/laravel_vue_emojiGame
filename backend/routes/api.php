@@ -18,17 +18,14 @@ Route::prefix('/profile')->controller(\App\Http\Controllers\ProfileController::c
     Route::post('/setAvatar', 'setAvatar');
     Route::get('/getAvatar', 'getAvatar');
 
-
 });
 
-
 Route::prefix('/game')->controller(\App\Http\Controllers\GameController::class)->middleware(\App\Http\Middleware\EnsureTokenValid::class)->group(function () {
-    Route::get('/getGameData', 'getGameData');
-    Route::get('/getFrame/{film}', 'getFrame');
-    Route::get('/getFilm', 'getFilm');
-    Route::get('/getStatistics', 'getStatistics');
+    Route::get('/data', 'getGameData');
+    Route::get('/frame/{film}', 'getFrame');
+    Route::get('/film', 'getFilm');
+    Route::get('/statistics', 'getStatistics');
     Route::post('/saveStatistics', 'saveStatistics');
-
 });
 
 Route::prefix('/admin')->controller(\App\Http\Controllers\AdminController::class)->group(function () {
